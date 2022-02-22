@@ -11,3 +11,6 @@
 [submodule "ext/pybind"]
     path = ext/pybind11
     url = https://github.com/pybind/pybind11
+[submodule "ext/Skity"]
+	path = ext/Skity
+	url = https://github.com/RuiwenTang/Skity.git

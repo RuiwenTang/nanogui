@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 2.8.12)
 
+set(CMAKE_CXX_STANDARD 14)
 if (POLICY CMP0048)
   # cmake warns if loaded from a min-3.0-required parent dir, so silence the warning:
   cmake_policy(SET CMP0048 NEW)
@@ -26,7 +27,7 @@ endif()
 option(NANOGUI_BUILD_EXAMPLE "Build NanoGUI example application?" ON)
 option(NANOGUI_BUILD_SHARED  "Build NanoGUI as a shared library?" ON)
 option(NANOGUI_BUILD_PYTHON  "Build a Python plugin for NanoGUI?" ON)
-option(NANOGUI_USE_GLAD      "Use Glad OpenGL loader library?" ${NANOGUI_USE_GLAD_DEFAULT})
+option(NANOGUI_USE_GLAD      "Use Glad OpenGL loader library?" ON)
 option(NANOGUI_INSTALL       "Install NanoGUI on `make install`?" ON)
 
 set(NANOGUI_PYTHON_VERSION "" CACHE STRING "Python version to use for compiling the Python plugin")
@@ -66,8 +67,8 @@ endmacro()
 
 # Compile GLFW
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL " " FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL " " FORCE)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL " " FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL " " NO)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL " " NO)
 set(GLFW_BUILD_INSTALL OFF CACHE BOOL " " FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL " " FORCE)
 set(GLFW_USE_CHDIR OFF CACHE BOOL " " FORCE)
@@ -79,6 +80,19 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/glfw" "ext_build/glfw")
+# skity options
+set(BUILD_EXAMPLE OFF)
+set(BUILD_TEST OFF)
+set(VULKAN_BACKEND ON)
+set(ENABLE_LOG OFF)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity")
+
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity/third_party/glm)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/Skity/include)
+
+
 # Two targets have now been defined: `glfw_objects`, which will be merged into
 # NanoGUI at the end, and `glfw`.  The `glfw` target is the library itself
 # (e.g., libglfw.so), but can be skipped as we do not need to link against it
@@ -384,6 +398,7 @@ if (NANOGUI_USE_GLAD AND NANOGUI_BUILD_SHARED)
     "GLAD_GLAPI_EXPORT;GLAD_GLAPI_EXPORT_BUILD")
 endif()
 
+target_link_libraries(nanogui skity::skity skity::svg)
 if (NANOGUI_BUILD_SHARED)
   target_link_libraries(nanogui ${NANOGUI_EXTRA_LIBS})
 endif()
