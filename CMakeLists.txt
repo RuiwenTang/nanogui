@@ -329,36 +329,15 @@ add_library(nanogui-obj OBJECT
   ${LIBNANOGUI_EXTRA_SOURCE}
   # Fonts etc.
   nanogui_resources.cpp
-  include/nanogui/glutil.h src/glutil.cpp
   include/nanogui/common.h src/common.cpp
   include/nanogui/widget.h src/widget.cpp
   include/nanogui/theme.h src/theme.cpp
   include/nanogui/layout.h src/layout.cpp
-  include/nanogui/screen.h src/screen.cpp
   include/nanogui/label.h src/label.cpp
+  include/nanogui/screen.h src/screen.cpp
   include/nanogui/window.h src/window.cpp
-  include/nanogui/popup.h src/popup.cpp
-  include/nanogui/checkbox.h src/checkbox.cpp
   include/nanogui/button.h src/button.cpp
-  include/nanogui/popupbutton.h src/popupbutton.cpp
-  include/nanogui/combobox.h src/combobox.cpp
-  include/nanogui/progressbar.h src/progressbar.cpp
-  include/nanogui/slider.h src/slider.cpp
-  include/nanogui/messagedialog.h src/messagedialog.cpp
-  include/nanogui/textbox.h src/textbox.cpp
-  include/nanogui/imagepanel.h src/imagepanel.cpp
-  include/nanogui/imageview.h src/imageview.cpp
-  include/nanogui/vscrollpanel.h src/vscrollpanel.cpp
-  include/nanogui/colorwheel.h src/colorwheel.cpp
-  include/nanogui/colorpicker.h src/colorpicker.cpp
-  include/nanogui/graph.h src/graph.cpp
-  include/nanogui/stackedwidget.h src/stackedwidget.cpp
-  include/nanogui/tabheader.h src/tabheader.cpp
-  include/nanogui/tabwidget.h src/tabwidget.cpp
-  include/nanogui/glcanvas.h src/glcanvas.cpp
-  include/nanogui/formhelper.h
-  include/nanogui/toolbutton.h
-  include/nanogui/opengl.h
+  include/nanogui/popup.h src/popup.cpp
   include/nanogui/nanogui.h
   include/nanogui/serializer/core.h
   include/nanogui/serializer/opengl.h
@@ -442,11 +421,13 @@ if(NANOGUI_BUILD_EXAMPLE)
   add_executable(example3      src/example3.cpp)
   add_executable(example4      src/example4.cpp)
   add_executable(example_icons src/example_icons.cpp)
+  add_executable(example_skity src/example_skity.cpp)
   target_link_libraries(example1      nanogui ${NANOGUI_EXTRA_LIBS})
   target_link_libraries(example2      nanogui ${NANOGUI_EXTRA_LIBS})
   target_link_libraries(example3      nanogui ${NANOGUI_EXTRA_LIBS})
   target_link_libraries(example4      nanogui ${NANOGUI_EXTRA_LIBS})
   target_link_libraries(example_icons nanogui ${NANOGUI_EXTRA_LIBS})
+  target_link_libraries(example_skity nanogui ${NANOGUI_EXTRA_LIBS})
 
   # Copy icons for example application
   file(COPY resources/icons DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

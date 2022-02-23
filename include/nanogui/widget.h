@@ -244,13 +244,13 @@ public:
     virtual bool keyboardCharacterEvent(unsigned int codepoint);
 
     /// Compute the preferred size of the widget
-    virtual Vector2i preferredSize(NVGcontext *ctx) const;
+    virtual Vector2i preferredSize() const;
 
     /// Invoke the associated layout generator to properly place child widgets, if any
-    virtual void performLayout(NVGcontext *ctx);
+    virtual void performLayout();
 
     /// Draw the widget (and all child widgets)
-    virtual void draw(NVGcontext *ctx);
+    virtual void draw(skity::Canvas* canvas);
 
     /// Save the state of the widget into the given \ref Serializer instance
     virtual void save(Serializer &s) const;

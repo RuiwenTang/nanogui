@@ -10,75 +10,94 @@
 */
 
 #include <nanogui/label.h>
-#include <nanogui/theme.h>
 #include <nanogui/opengl.h>
 #include <nanogui/serializer/core.h>
+#include <nanogui/theme.h>
 
 NAMESPACE_BEGIN(nanogui)
 
-Label::Label(Widget *parent, const std::string &caption, const std::string &font, int fontSize)
+Label::Label(Widget *parent, const std::string &caption,
+             const std::string &font, int fontSize)
     : Widget(parent), mCaption(caption), mFont(font) {
-    if (mTheme) {
-        mFontSize = mTheme->mStandardFontSize;
-        mColor = mTheme->mTextColor;
-    }
-    if (fontSize >= 0) mFontSize = fontSize;
+  if (mTheme) {
+    mFontSize = mTheme->mStandardFontSize;
+    mColor = mTheme->mTextColor;
+  }
+  if (fontSize >= 0) mFontSize = fontSize;
+
+  mStylePaint.setStyle(skity::Paint::kFill_Style);
+  mStylePaint.setTextSize(mFontSize);
+  mStylePaint.SetFillColor(mColor.toColor());
+  if (mFont == "sans-bold") {
+    mStylePaint.setTypeface(mTheme->mFontBold);
+  } else {
+    mStylePaint.setTypeface(mTheme->mFontNormal);
+  }
+}
+
+void Label::setCaption(const std::string &caption) {
+  mCaption = caption;
+  mCaptionBlob = nullptr;
+
+  rebuildCaptionBlob();
 }
 
 void Label::setTheme(Theme *theme) {
-    Widget::setTheme(theme);
-    if (mTheme) {
-        mFontSize = mTheme->mStandardFontSize;
-        mColor = mTheme->mTextColor;
-    }
+  Widget::setTheme(theme);
+  if (mTheme) {
+    mFontSize = mTheme->mStandardFontSize;
+    mColor = mTheme->mTextColor;
+  }
+
+  mStylePaint.setTextSize(mFontSize);
+  mStylePaint.SetFillColor(mColor.toColor());
+
+  mCaptionBlob = nullptr;
+  rebuildCaptionBlob();
 }
 
-Vector2i Label::preferredSize(NVGcontext *ctx) const {
-    if (mCaption == "")
-        return Vector2i::Zero();
-    nvgFontFace(ctx, mFont.c_str());
-    nvgFontSize(ctx, fontSize());
-    if (mFixedSize.x() > 0) {
-        float bounds[4];
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgTextBoxBounds(ctx, mPos.x(), mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr, bounds);
-        return Vector2i(mFixedSize.x(), bounds[3] - bounds[1]);
-    } else {
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        return Vector2i(
-            nvgTextBounds(ctx, 0, 0, mCaption.c_str(), nullptr, nullptr) + 2,
-            fontSize()
-        );
-    }
+Vector2i Label::preferredSize() const {
+  if (mCaption == "") return Vector2i::Zero();
+
+  auto bounds = mCaptionBlob->getBoundSize();
+
+  if (mFixedSize.x() > 0) {
+    return Vector2i(mFixedSize.x(), bounds.y);
+  } else {
+    return Vector2i(bounds.x + 2, fontSize());
+  }
 }
 
-void Label::draw(NVGcontext *ctx) {
-    Widget::draw(ctx);
-    nvgFontFace(ctx, mFont.c_str());
-    nvgFontSize(ctx, fontSize());
-    nvgFillColor(ctx, mColor);
-    if (mFixedSize.x() > 0) {
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-        nvgTextBox(ctx, mPos.x(), mPos.y(), mFixedSize.x(), mCaption.c_str(), nullptr);
-    } else {
-        nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-        nvgText(ctx, mPos.x(), mPos.y() + mSize.y() * 0.5f, mCaption.c_str(), nullptr);
-    }
+void Label::draw(skity::Canvas *canvas) {
+  Widget::draw(canvas);
+  if (mCaptionBlob == nullptr) {
+    return;
+  }
+  // TODO handle line break
+  canvas->drawTextBlob(mCaptionBlob.get(), mPos.x(), mPos.y(), mStylePaint);
+}
+
+void Label::rebuildCaptionBlob() {
+  if (mCaption.empty()) {
+    return;
+  }
+
+  mCaptionBlob = mBlobBuilder.buildTextBlob(mCaption.c_str(), mStylePaint);
 }
 
 void Label::save(Serializer &s) const {
-    Widget::save(s);
-    s.set("caption", mCaption);
-    s.set("font", mFont);
-    s.set("color", mColor);
+  Widget::save(s);
+  s.set("caption", mCaption);
+  s.set("font", mFont);
+  s.set("color", mColor);
 }
 
 bool Label::load(Serializer &s) {
-    if (!Widget::load(s)) return false;
-    if (!s.get("caption", mCaption)) return false;
-    if (!s.get("font", mFont)) return false;
-    if (!s.get("color", mColor)) return false;
-    return true;
+  if (!Widget::load(s)) return false;
+  if (!s.get("caption", mCaption)) return false;
+  if (!s.get("font", mFont)) return false;
+  if (!s.get("color", mColor)) return false;
+  return true;
 }
 
 NAMESPACE_END(nanogui)

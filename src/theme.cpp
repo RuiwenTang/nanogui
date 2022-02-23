@@ -11,83 +11,91 @@
     BSD-style license that can be found in the LICENSE.txt file.
 */
 
-#include <nanogui/theme.h>
-#include <nanogui/opengl.h>
 #include <nanogui/entypo.h>
+#include <nanogui/opengl.h>
+#include <nanogui/theme.h>
 #include <nanogui_resources.h>
 
 NAMESPACE_BEGIN(nanogui)
 
-Theme::Theme(NVGcontext *ctx) {
-    mStandardFontSize                 = 16;
-    mButtonFontSize                   = 20;
-    mTextBoxFontSize                  = 20;
-    mIconScale                        = 0.77f;
+static std::shared_ptr<skity::Typeface> make_type_face(void* data,
+                                                       size_t data_size) {
+  auto font_data = skity::Data::MakeWithCopy(data, data_size);
 
-    mWindowCornerRadius               = 2;
-    mWindowHeaderHeight               = 30;
-    mWindowDropShadowSize             = 10;
-    mButtonCornerRadius               = 2;
-    mTabBorderWidth                   = 0.75f;
-    mTabInnerMargin                   = 5;
-    mTabMinButtonWidth                = 20;
-    mTabMaxButtonWidth                = 160;
-    mTabControlWidth                  = 20;
-    mTabButtonHorizontalPadding       = 10;
-    mTabButtonVerticalPadding         = 2;
+  if (font_data == nullptr) {
+    return nullptr;
+  }
 
-    mDropShadow                       = Color(0, 128);
-    mTransparent                      = Color(0, 0);
-    mBorderDark                       = Color(29, 255);
-    mBorderLight                      = Color(92, 255);
-    mBorderMedium                     = Color(35, 255);
-    mTextColor                        = Color(255, 160);
-    mDisabledTextColor                = Color(255, 80);
-    mTextColorShadow                  = Color(0, 160);
-    mIconColor                        = mTextColor;
+  return skity::Typeface::MakeFromData(font_data);
+}
 
-    mButtonGradientTopFocused         = Color(64, 255);
-    mButtonGradientBotFocused         = Color(48, 255);
-    mButtonGradientTopUnfocused       = Color(74, 255);
-    mButtonGradientBotUnfocused       = Color(58, 255);
-    mButtonGradientTopPushed          = Color(41, 255);
-    mButtonGradientBotPushed          = Color(29, 255);
+Theme::Theme() {
+  mStandardFontSize = 16;
+  mButtonFontSize = 20;
+  mTextBoxFontSize = 20;
+  mIconScale = 0.77f;
 
-    /* Window-related */
-    mWindowFillUnfocused              = Color(43, 230);
-    mWindowFillFocused                = Color(45, 230);
-    mWindowTitleUnfocused             = Color(220, 160);
-    mWindowTitleFocused               = Color(255, 190);
+  mWindowCornerRadius = 2;
+  mWindowHeaderHeight = 30;
+  mWindowDropShadowSize = 10;
+  mButtonCornerRadius = 2;
+  mTabBorderWidth = 0.75f;
+  mTabInnerMargin = 5;
+  mTabMinButtonWidth = 20;
+  mTabMaxButtonWidth = 160;
+  mTabControlWidth = 20;
+  mTabButtonHorizontalPadding = 10;
+  mTabButtonVerticalPadding = 2;
 
-    mWindowHeaderGradientTop          = mButtonGradientTopUnfocused;
-    mWindowHeaderGradientBot          = mButtonGradientBotUnfocused;
-    mWindowHeaderSepTop               = mBorderLight;
-    mWindowHeaderSepBot               = mBorderDark;
+  mDropShadow = Color(0, 128);
+  mTransparent = Color(0, 0);
+  mBorderDark = Color(29, 255);
+  mBorderLight = Color(92, 255);
+  mBorderMedium = Color(35, 255);
+  mTextColor = Color(255, 160);
+  mDisabledTextColor = Color(255, 80);
+  mTextColorShadow = Color(0, 160);
+  mIconColor = mTextColor;
 
-    mWindowPopup                      = Color(50, 255);
-    mWindowPopupTransparent           = Color(50, 0);
+  mButtonGradientTopFocused = Color(64, 255);
+  mButtonGradientBotFocused = Color(48, 255);
+  mButtonGradientTopUnfocused = Color(74, 255);
+  mButtonGradientBotUnfocused = Color(58, 255);
+  mButtonGradientTopPushed = Color(41, 255);
+  mButtonGradientBotPushed = Color(29, 255);
 
-    mCheckBoxIcon                     = ENTYPO_ICON_CHECK;
-    mMessageInformationIcon           = ENTYPO_ICON_INFO_WITH_CIRCLE;
-    mMessageQuestionIcon              = ENTYPO_ICON_HELP_WITH_CIRCLE;
-    mMessageWarningIcon               = ENTYPO_ICON_WARNING;
-    mMessageAltButtonIcon             = ENTYPO_ICON_CIRCLE_WITH_CROSS;
-    mMessagePrimaryButtonIcon         = ENTYPO_ICON_CHECK;
-    mPopupChevronRightIcon            = ENTYPO_ICON_CHEVRON_RIGHT;
-    mPopupChevronLeftIcon             = ENTYPO_ICON_CHEVRON_LEFT;
-    mTabHeaderLeftIcon                = ENTYPO_ICON_ARROW_BOLD_LEFT;
-    mTabHeaderRightIcon               = ENTYPO_ICON_ARROW_BOLD_RIGHT;
-    mTextBoxUpIcon                    = ENTYPO_ICON_CHEVRON_UP;
-    mTextBoxDownIcon                  = ENTYPO_ICON_CHEVRON_DOWN;
+  /* Window-related */
+  mWindowFillUnfocused = Color(43, 230);
+  mWindowFillFocused = Color(45, 230);
+  mWindowTitleUnfocused = Color(220, 160);
+  mWindowTitleFocused = Color(255, 190);
 
-    mFontNormal = nvgCreateFontMem(ctx, "sans", roboto_regular_ttf,
-                                   roboto_regular_ttf_size, 0);
-    mFontBold = nvgCreateFontMem(ctx, "sans-bold", roboto_bold_ttf,
-                                 roboto_bold_ttf_size, 0);
-    mFontIcons = nvgCreateFontMem(ctx, "icons", entypo_ttf,
-                                  entypo_ttf_size, 0);
-    if (mFontNormal == -1 || mFontBold == -1 || mFontIcons == -1)
-        throw std::runtime_error("Could not load fonts!");
+  mWindowHeaderGradientTop = mButtonGradientTopUnfocused;
+  mWindowHeaderGradientBot = mButtonGradientBotUnfocused;
+  mWindowHeaderSepTop = mBorderLight;
+  mWindowHeaderSepBot = mBorderDark;
+
+  mWindowPopup = Color(50, 255);
+  mWindowPopupTransparent = Color(50, 0);
+
+  mCheckBoxIcon = ENTYPO_ICON_CHECK;
+  mMessageInformationIcon = ENTYPO_ICON_INFO_WITH_CIRCLE;
+  mMessageQuestionIcon = ENTYPO_ICON_HELP_WITH_CIRCLE;
+  mMessageWarningIcon = ENTYPO_ICON_WARNING;
+  mMessageAltButtonIcon = ENTYPO_ICON_CIRCLE_WITH_CROSS;
+  mMessagePrimaryButtonIcon = ENTYPO_ICON_CHECK;
+  mPopupChevronRightIcon = ENTYPO_ICON_CHEVRON_RIGHT;
+  mPopupChevronLeftIcon = ENTYPO_ICON_CHEVRON_LEFT;
+  mTabHeaderLeftIcon = ENTYPO_ICON_ARROW_BOLD_LEFT;
+  mTabHeaderRightIcon = ENTYPO_ICON_ARROW_BOLD_RIGHT;
+  mTextBoxUpIcon = ENTYPO_ICON_CHEVRON_UP;
+  mTextBoxDownIcon = ENTYPO_ICON_CHEVRON_DOWN;
+
+  mFontNormal = make_type_face(roboto_regular_ttf, roboto_regular_ttf_size);
+  mFontBold = make_type_face(roboto_bold_ttf, roboto_bold_ttf_size);
+  mFontIcons = make_type_face(entypo_ttf, entypo_ttf_size);
+  if (mFontNormal == nullptr || mFontBold == nullptr || mFontIcons == nullptr)
+    throw std::runtime_error("Could not load fonts!");
 }
 
 NAMESPACE_END(nanogui)

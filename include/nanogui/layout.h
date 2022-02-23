@@ -15,8 +15,9 @@
 
 #pragma once
 
-#include <cstdio>
 #include <nanogui/object.h>
+
+#include <cstdio>
 #include <skity/skity.hpp>
 #include <unordered_map>
 
@@ -24,16 +25,16 @@ NAMESPACE_BEGIN(nanogui)
 
 /// The different kinds of alignments a layout can perform.
 enum class Alignment : uint8_t {
-  Minimum = 0, ///< Take only as much space as is required.
-  Middle,      ///< Center align.
-  Maximum,     ///< Take as much space as is allowed.
-  Fill         ///< Fill according to preferred sizes.
+  Minimum = 0,  ///< Take only as much space as is required.
+  Middle,       ///< Center align.
+  Maximum,      ///< Take as much space as is allowed.
+  Fill          ///< Fill according to preferred sizes.
 };
 
 /// The direction of data flow for a layout.
 enum class Orientation {
-  Horizontal = 0, ///< Layout expands on horizontal axis.
-  Vertical        ///< Layout expands on vertical axis.
+  Horizontal = 0,  ///< Layout expands on horizontal axis.
+  Vertical         ///< Layout expands on vertical axis.
 };
 
 /**
@@ -42,7 +43,7 @@ enum class Orientation {
  * \brief Basic interface of a layout engine.
  */
 class NANOGUI_EXPORT Layout : public Object {
-public:
+ public:
   /**
    * Performs any and all resizing applicable.
    *
@@ -52,7 +53,7 @@ public:
    * \param widget
    *     The Widget this layout is controlling sizing for.
    */
-  virtual void performLayout(NVGcontext *ctx, Widget *widget) const = 0;
+  virtual void performLayout(Widget *widget) const = 0;
 
   /**
    * The preferred size for this layout.
@@ -67,10 +68,9 @@ public:
    *     The preferred size, accounting for things such as spacing, padding
    *     for icons, etc.
    */
-  virtual Vector2i preferredSize(NVGcontext *ctx,
-                                 const Widget *widget) const = 0;
+  virtual Vector2i preferredSize(const Widget *widget) const = 0;
 
-protected:
+ protected:
   /// Default destructor (exists for inheritance).
   virtual ~Layout() {}
 };
@@ -85,7 +85,7 @@ protected:
  * widgets.
  */
 class NANOGUI_EXPORT BoxLayout : public Layout {
-public:
+ public:
   /**
    * \brief Construct a box layout which packs widgets in the given \c
    * Orientation
@@ -131,13 +131,12 @@ public:
 
   /* Implementation of the layout interface */
   /// See \ref Layout::preferredSize.
-  virtual Vector2i preferredSize(NVGcontext *ctx,
-                                 const Widget *widget) const override;
+  virtual Vector2i preferredSize(const Widget *widget) const override;
 
   /// See \ref Layout::performLayout.
-  virtual void performLayout(NVGcontext *ctx, Widget *widget) const override;
+  virtual void performLayout(Widget *widget) const override;
 
-protected:
+ protected:
   /// The Orientation of this BoxLayout.
   Orientation mOrientation;
 
@@ -164,7 +163,7 @@ protected:
  * under some high-level heading.
  */
 class NANOGUI_EXPORT GroupLayout : public Layout {
-public:
+ public:
   /**
    * Creates a GroupLayout.
    *
@@ -182,7 +181,9 @@ public:
    */
   GroupLayout(int margin = 15, int spacing = 6, int groupSpacing = 14,
               int groupIndent = 20)
-      : mMargin(margin), mSpacing(spacing), mGroupSpacing(groupSpacing),
+      : mMargin(margin),
+        mSpacing(spacing),
+        mGroupSpacing(groupSpacing),
         mGroupIndent(groupIndent) {}
 
   /// The margin of this GroupLayout.
@@ -212,13 +213,12 @@ public:
 
   /* Implementation of the layout interface */
   /// See \ref Layout::preferredSize.
-  virtual Vector2i preferredSize(NVGcontext *ctx,
-                                 const Widget *widget) const override;
+  virtual Vector2i preferredSize(const Widget *widget) const override;
 
   /// See \ref Layout::performLayout.
-  virtual void performLayout(NVGcontext *ctx, Widget *widget) const override;
+  virtual void performLayout(Widget *widget) const override;
 
-protected:
+ protected:
   /// The margin of this GroupLayout.
   int mMargin;
 
@@ -244,7 +244,7 @@ protected:
  * row and column.
  */
 class NANOGUI_EXPORT GridLayout : public Layout {
-public:
+ public:
   /**
    * Create a 2-column grid layout by default.
    *
@@ -331,18 +331,16 @@ public:
 
   /* Implementation of the layout interface */
   /// See \ref Layout::preferredSize.
-  virtual Vector2i preferredSize(NVGcontext *ctx,
-                                 const Widget *widget) const override;
+  virtual Vector2i preferredSize(const Widget *widget) const override;
 
   /// See \ref Layout::performLayout.
-  virtual void performLayout(NVGcontext *ctx, Widget *widget) const override;
+  virtual void performLayout(Widget *widget) const override;
 
-protected:
+ protected:
   /// Compute the maximum row and column sizes
-  void computeLayout(NVGcontext *ctx, const Widget *widget,
-                     std::vector<int> *grid) const;
+  void computeLayout(const Widget *widget, std::vector<int> *grid) const;
 
-protected:
+ protected:
   /// The Orientation defining this GridLayout.
   Orientation mOrientation;
 
@@ -362,7 +360,7 @@ protected:
   /// The margin around this GridLayout.
   int mMargin;
 
-public:
+ public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
@@ -403,16 +401,16 @@ public:
  * - https://github.com/jaapgeurts/higlayout
  */
 class NANOGUI_EXPORT AdvancedGridLayout : public Layout {
-public:
+ public:
   /**
    * \struct Anchor layout.h nanogui/layout.h
    *
    * \brief Helper struct to coordinate anchor points for the layout.
    */
   struct Anchor {
-    uint8_t pos[2];     ///< The ``(x, y)`` position.
-    uint8_t size[2];    ///< The ``(x, y)`` size.
-    Alignment align[2]; ///< The ``(x, y)`` Alignment.
+    uint8_t pos[2];      ///< The ``(x, y)`` position.
+    uint8_t size[2];     ///< The ``(x, y)`` size.
+    Alignment align[2];  ///< The ``(x, y)`` Alignment.
 
     /// Creates a ``0`` Anchor.
     Anchor() {}
@@ -503,18 +501,16 @@ public:
 
   /* Implementation of the layout interface */
   /// See \ref Layout::preferredSize.
-  virtual Vector2i preferredSize(NVGcontext *ctx,
-                                 const Widget *widget) const override;
+  virtual Vector2i preferredSize(const Widget *widget) const override;
 
   /// See \ref Layout::performLayout.
-  virtual void performLayout(NVGcontext *ctx, Widget *widget) const override;
+  virtual void performLayout(Widget *widget) const override;
 
-protected:
+ protected:
   /// Computes the layout
-  void computeLayout(NVGcontext *ctx, const Widget *widget,
-                     std::vector<int> *grid) const;
+  void computeLayout(const Widget *widget, std::vector<int> *grid) const;
 
-protected:
+ protected:
   /// The columns of this AdvancedGridLayout.
   std::vector<int> mCols;
 
