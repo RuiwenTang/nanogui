@@ -664,7 +664,7 @@ void TextBox::save(Serializer &s) const {
   s.set("alignment", (int)mAlignment);
   s.set("units", mUnits);
   s.set("format", mFormat);
-  s.set("unitsImage", mUnitsImage);
+//  s.set("unitsImage", mUnitsImage);
   s.set("validFormat", mValidFormat);
   s.set("valueTemp", mValueTemp);
   s.set("cursorPos", mCursorPos);
@@ -681,7 +681,7 @@ bool TextBox::load(Serializer &s) {
   if (!s.get("alignment", mAlignment)) return false;
   if (!s.get("units", mUnits)) return false;
   if (!s.get("format", mFormat)) return false;
-  if (!s.get("unitsImage", mUnitsImage)) return false;
+//  if (!s.get("unitsImage", mUnitsImage)) return false;
   if (!s.get("validFormat", mValidFormat)) return false;
   if (!s.get("valueTemp", mValueTemp)) return false;
   if (!s.get("cursorPos", mCursorPos)) return false;

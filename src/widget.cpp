@@ -207,13 +207,12 @@ void Widget::draw(skity::Canvas *canvas) {
   if (mChildren.empty()) return;
 
   int count = canvas->save();
-  canvas->translate(mPos.x(), mPos.y());
   for (auto child : mChildren) {
     if (child->visible()) {
       canvas->save();
       // TODO clip children
-//      nvgIntersectScissor(ctx, child->mPos.x(), child->mPos.y(),
-//                          child->mSize.x(), child->mSize.y());
+      //      nvgIntersectScissor(ctx, child->mPos.x(), child->mPos.y(),
+      //                          child->mSize.x(), child->mSize.y());
       canvas->translate(child->mPos.x(), child->mPos.y());
       child->draw(canvas);
       canvas->restore();

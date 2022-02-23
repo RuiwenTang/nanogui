@@ -225,40 +225,40 @@ class NANOGUI_EXPORT Theme : public Object {
   Color mWindowPopupTransparent;
 
   /// Icon to use for CheckBox widgets (default: ``ENTYPO_ICON_CHECK``).
-  int mCheckBoxIcon;
+  std::string mCheckBoxIcon;
   /// Icon to use for informational MessageDialog widgets (default:
   /// ``ENTYPO_ICON_INFO_WITH_CIRCLE``).
-  int mMessageInformationIcon;
+  std::string mMessageInformationIcon;
   /// Icon to use for interrogative MessageDialog widgets (default:
   /// ``ENTYPO_ICON_HELP_WITH_CIRCLE``).
-  int mMessageQuestionIcon;
+  std::string mMessageQuestionIcon;
   /// Icon to use for warning MessageDialog widgets (default:
   /// ``ENTYPO_ICON_WARNING``).
-  int mMessageWarningIcon;
+  std::string mMessageWarningIcon;
   /// Icon to use on MessageDialog alt button (default:
   /// ``ENTYPO_ICON_CIRCLE_WITH_CROSS``).
-  int mMessageAltButtonIcon;
+  std::string mMessageAltButtonIcon;
   /// Icon to use on MessageDialog primary button (default:
   /// ``ENTYPO_ICON_CHECK``).
-  int mMessagePrimaryButtonIcon;
+  std::string mMessagePrimaryButtonIcon;
   /// Icon to use for PopupButton widgets opening to the right (default:
   /// ``ENTYPO_ICON_CHEVRON_RIGHT``).
-  int mPopupChevronRightIcon;
+  std::string mPopupChevronRightIcon;
   /// Icon to use for PopupButton widgets opening to the left (default:
   /// ``ENTYPO_ICON_CHEVRON_LEFT``).
-  int mPopupChevronLeftIcon;
+  std::string mPopupChevronLeftIcon;
   /// Icon to indicate hidden tabs to the left on a TabHeader (default:
   /// ``ENTYPO_ICON_ARROW_BOLD_LEFT``).
-  int mTabHeaderLeftIcon;
+  std::string mTabHeaderLeftIcon;
   /// Icon to indicate hidden tabs to the right on a TabHeader (default:
   /// ``ENTYPO_ICON_ARROW_BOLD_RIGHT``).
-  int mTabHeaderRightIcon;
+  std::string mTabHeaderRightIcon;
   /// Icon to use when a TextBox has an up toggle (e.g. IntBox) (default:
   /// ``ENTYPO_ICON_CHEVRON_UP``).
-  int mTextBoxUpIcon;
+  std::string mTextBoxUpIcon;
   /// Icon to use when a TextBox has a down toggle (e.g. IntBox) (default:
   /// ``ENTYPO_ICON_CHEVRON_DOWN``).
-  int mTextBoxDownIcon;
+  std::string mTextBoxDownIcon;
 
  protected:
   /// Default destructor does nothing; allows for inheritance.

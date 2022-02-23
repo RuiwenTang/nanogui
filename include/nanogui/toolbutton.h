@@ -22,15 +22,16 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Simple radio+toggle button with an icon.
  */
 class ToolButton : public Button {
-public:
-    ToolButton(Widget *parent, int icon,
-           const std::string &caption = "")
-        : Button(parent, caption, icon) {
-        setFlags(Flags::RadioButton | Flags::ToggleButton);
-        setFixedSize(Vector2i(25, 25));
-    }
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+ public:
+  ToolButton(Widget *parent, const std::string &icon,
+             const std::string &caption = "")
+      : Button(parent, caption, icon) {
+    setFlags(Flags::RadioButton | Flags::ToggleButton);
+    setFixedSize(Vector2i(25, 25));
+  }
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

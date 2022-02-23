@@ -36,7 +36,9 @@ Vector2i Window::preferredSize() const {
   if (mButtonPanel) mButtonPanel->setVisible(true);
 
   auto bounds = mTitleBlob->getBoundSize();
-
+  // make some space for text shadow
+  bounds.x += 2.f;
+  bounds.y += 2.f;
   return result.cwiseMax(Vector2i(bounds.x, bounds.y));
 }
 
@@ -74,16 +76,15 @@ void Window::draw(skity::Canvas *canvas) {
   /* Draw window */
   canvas->save();
   skity::Path bound_path;
-  bound_path.addRoundRect(
-      skity::Rect::MakeXYWH(mPos.x(), mPos.y(), mSize.x(), mSize.y()), cr, cr);
+  bound_path.addRoundRect(skity::Rect::MakeXYWH(0, 0, mSize.x(), mSize.y()), cr,
+                          cr);
 
   // draw shadow
   {
     mStylePaint.setMaskFilter(skity::MaskFilter::MakeBlur(
         skity::kNormal, mTheme->mWindowDropShadowSize));
 
-    mStylePaint.SetFillColor(mTheme->mDropShadow.x(), mTheme->mDropShadow.y(),
-                             mTheme->mDropShadow.z(), 1.f);
+    mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
 
     canvas->drawPath(bound_path, mStylePaint);
     mStylePaint.setMaskFilter(nullptr);
@@ -94,29 +95,29 @@ void Window::draw(skity::Canvas *canvas) {
   auto color =
       mMouseFocus ? mTheme->mWindowFillFocused : mTheme->mWindowFillUnfocused;
 
-  mStylePaint.SetFillColor(color.x(), color.y(), color.z(), 1.f);
+  mStylePaint.SetFillColor(color.toColor());
 
   canvas->drawPath(bound_path, mStylePaint);
 
   if (!mTitle.empty()) {
     /* Draw header */
+    float descent = mTitleBlob->getBlobDescent();
+    auto title_bounds = mTitleBlob->getBoundSize();
+    float offset_y = descent * 0.5f;
     skity::RRect header_round = skity::RRect::MakeRectXY(
-        skity::Rect::MakeXYWH(mPos.x(), mPos.y(), mSize.x(), hh), cr, cr);
+        skity::Rect::MakeXYWH(0, 0, mSize.x(), hh), cr, cr);
     {
       std::array<skity::Point, 2> pts{};
       std::array<skity::Color4f, 2> colors{};
 
-      pts[0].x = mPos.x();
-      pts[0].y = mPos.y();
-      pts[1].x = mPos.x();
-      pts[1].y = mPos.y() + hh;
+      pts[0].x = 0;
+      pts[0].y = 0;
+      pts[1].x = 0;
+      pts[1].y = hh;
 
-      colors[0] = {mTheme->mWindowHeaderGradientTop.x(),
-                   mTheme->mWindowHeaderGradientTop.y(),
-                   mTheme->mWindowHeaderGradientTop.z(), 1.f};
-      colors[1] = {mTheme->mWindowHeaderGradientBot.x(),
-                   mTheme->mWindowHeaderGradientBot.y(),
-                   mTheme->mWindowHeaderGradientBot.z(), 1.f};
+      colors[0] = mTheme->mWindowHeaderGradientTop.toColor();
+      colors[1] = mTheme->mWindowHeaderGradientBot.toColor();
+
       mStylePaint.setShader(
           skity::Shader::MakeLinear(pts.data(), colors.data(), nullptr, 2));
 
@@ -126,19 +127,15 @@ void Window::draw(skity::Canvas *canvas) {
 
     mStylePaint.setStyle(skity::Paint::kStroke_Style);
     mStylePaint.setStrokeWidth(1.f);
-    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepTop.x(),
-                               mTheme->mWindowHeaderSepTop.y(),
-                               mTheme->mWindowHeaderSepTop.z(), 1.f);
+    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepTop.toColor());
 
     canvas->drawRRect(header_round, mStylePaint);
 
     skity::Path line_path;
-    line_path.moveTo(mPos.x() + 0.5f, mPos.y() + hh - 1.5f);
-    line_path.lineTo(mPos.x() + mSize.x() - 0.5f, mPos.y() + hh - 1.5f);
+    line_path.moveTo(0.5f, hh - 1.5f);
+    line_path.lineTo(mSize.x() - 0.5f, hh - 1.5f);
 
-    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepBot.x(),
-                               mTheme->mWindowHeaderSepBot.y(),
-                               mTheme->mWindowHeaderSepBot.z(), 1.f);
+    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepBot.toColor());
 
     canvas->drawPath(line_path, mStylePaint);
 
@@ -148,8 +145,9 @@ void Window::draw(skity::Canvas *canvas) {
           skity::MaskFilter::MakeBlur(skity::kNormal, 4.f));
       mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
 
-      canvas->drawTextBlob(mTitleBlob.get(), mPos.x() + mSize.x() / 2.f,
-                           mPos.y() + hh / 2.f, mStylePaint);
+      canvas->drawTextBlob(mTitleBlob.get(),
+                           (mSize.x() - title_bounds.x) * 0.5f, hh + offset_y,
+                           mStylePaint);
 
       mStylePaint.setMaskFilter(nullptr);
     }
@@ -158,8 +156,8 @@ void Window::draw(skity::Canvas *canvas) {
         mFocused ? mTheme->mWindowTitleFocused : mTheme->mWindowTitleUnfocused;
 
     mStylePaint.SetFillColor(title_color.toColor());
-    canvas->drawTextBlob(mTitleBlob.get(), mPos.x() + mSize.x() / 2.f,
-                         mPos.y() + hh / 2.f - 1, mStylePaint);
+    canvas->drawTextBlob(mTitleBlob.get(), (mSize.x() - title_bounds.x) * 0.5f,
+                         hh + offset_y - 1, mStylePaint);
   }
 
   canvas->restore();

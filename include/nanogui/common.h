@@ -366,7 +366,7 @@ class Color : public Eigen::Vector4f {
   /// Return a reference to the blue channel (const version)
   const float &b() const { return z(); }
 
-  skity::Color4f toColor() const { return skity::Color4f(r(), g(), b(), 1.f); }
+  skity::Color4f toColor() const { return {r(), g(), b(), w()}; }
 
   /**
    * Computes the luminance as ``l = 0.299r + 0.587g + 0.144b + 0.0a``.  If

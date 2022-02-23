@@ -338,6 +338,9 @@ add_library(nanogui-obj OBJECT
   include/nanogui/window.h src/window.cpp
   include/nanogui/button.h src/button.cpp
   include/nanogui/popup.h src/popup.cpp
+  include/nanogui/textbox.h src/textbox.cpp
+  include/nanogui/toolbutton.h
+  include/nanogui/formhelper.h
   include/nanogui/nanogui.h
   include/nanogui/serializer/core.h
   include/nanogui/serializer/opengl.h

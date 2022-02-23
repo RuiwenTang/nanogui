@@ -54,7 +54,10 @@ class NANOGUI_EXPORT Button : public Widget {
    * \param icon
    *     The icon to display with this Button.  See \ref nanogui::Button::mIcon.
    */
-  Button(Widget *parent, const std::string &caption = "Untitled", int icon = 0);
+  Button(Widget *parent, std::string caption = "Untitled",
+         std::string icon = "");
+  Button(Widget *parent, const std::string &caption = "Untitled",
+         const std::shared_ptr<skity::Pixmap> &icon = nullptr);
 
   /// Returns the caption of this Button.
   const std::string &caption() const { return mCaption; }
@@ -77,10 +80,10 @@ class NANOGUI_EXPORT Button : public Widget {
   void setTextColor(const Color &textColor) { mTextColor = textColor; }
 
   /// Returns the icon of this Button.  See \ref nanogui::Button::mIcon.
-  int icon() const { return mIcon; }
+  std::string iconStr() const { return mIconStr; }
 
   /// Sets the icon of this Button.  See \ref nanogui::Button::mIcon.
-  void setIcon(int icon) { mIcon = icon; }
+  void setIconStr(std::string const& icon);
 
   /// The current flags of this Button (see \ref nanogui::Button::Flags for
   /// options).
@@ -149,19 +152,6 @@ class NANOGUI_EXPORT Button : public Widget {
   /// The caption of this Button.
   std::string mCaption;
 
-  /**
-   * \brief The icon of this Button (``0`` means no icon).
-   *
-   * \rst
-   * The icon to display with this Button.  If not ``0``, may either be a
-   * picture icon, or one of the icons enumerated in
-   * :ref:`file_nanogui_entypo.h`.  The kind of icon (image or Entypo)
-   * is determined by the functions :func:`nanogui::nvgIsImageIcon` and its
-   * reciprocal counterpart :func:`nanogui::nvgIsFontIcon`.
-   * \endrst
-   */
-  int mIcon;
-
   /// The position to draw the icon at.
   IconPosition mIconPosition;
 
@@ -190,13 +180,15 @@ class NANOGUI_EXPORT Button : public Widget {
   int getFontSize() const;
 
  private:
-  skity::TextBlobBuilder mTextBlobBuilder;
-  skity::Paint mStylePaint;
-  bool mCaptionDirty = true;
-  std::shared_ptr<skity::TextBlob> mCaptionBlob;
-  std::shared_ptr<skity::TextBlob> mIconBlob;
+  std::string mIconStr;
+  skity::TextBlobBuilder mTextBlobBuilder = {};
+  skity::Paint mStylePaint = {};
+  std::shared_ptr<skity::TextBlob> mCaptionBlob = {};
+  std::shared_ptr<skity::TextBlob> mIconBlob = {};
+  std::shared_ptr<skity::Pixmap> mIconPixmap = {};
 
   void rebuildCaptionBlob();
+  void rebuildIconBlob();
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

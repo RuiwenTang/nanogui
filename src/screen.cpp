@@ -191,7 +191,12 @@ Screen::Screen(const Vector2i &size, const std::string &caption, bool resizable,
   glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
   glViewport(0, 0, mFBSize[0], mFBSize[1]);
   glClearColor(mBackground[0], mBackground[1], mBackground[2], mBackground[3]);
+  glClearStencil(0x0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+  glEnable(GL_STENCIL_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
   glfwSwapInterval(0);
   glfwSwapBuffers(mGLFWWindow);
 

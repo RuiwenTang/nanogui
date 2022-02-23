@@ -33,6 +33,8 @@ Label::Label(Widget *parent, const std::string &caption,
   } else {
     mStylePaint.setTypeface(mTheme->mFontNormal);
   }
+
+  rebuildCaptionBlob();
 }
 
 void Label::setCaption(const std::string &caption) {
@@ -73,8 +75,9 @@ void Label::draw(skity::Canvas *canvas) {
   if (mCaptionBlob == nullptr) {
     return;
   }
+  float ascent = mCaptionBlob->getBlobAscent();
   // TODO handle line break
-  canvas->drawTextBlob(mCaptionBlob.get(), mPos.x(), mPos.y(), mStylePaint);
+  canvas->drawTextBlob(mCaptionBlob.get(), 0, ascent, mStylePaint);
 }
 
 void Label::rebuildCaptionBlob() {

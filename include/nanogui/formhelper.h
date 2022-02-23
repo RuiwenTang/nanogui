@@ -17,10 +17,10 @@
 
 #include <nanogui/screen.h>
 #include <nanogui/label.h>
-#include <nanogui/checkbox.h>
+//#include <nanogui/checkbox.h>
 #include <nanogui/textbox.h>
-#include <nanogui/combobox.h>
-#include <nanogui/colorpicker.h>
+//#include <nanogui/combobox.h>
+//#include <nanogui/colorpicker.h>
 #include <nanogui/layout.h>
 #include <cassert>
 
@@ -190,7 +190,7 @@ public:
 
     /// Add a button with a custom callback
     Button *addButton(const std::string &label, const std::function<void()> &cb) {
-        Button *button = new Button(mWindow, label);
+        Button *button = new Button(mWindow, label, "");
         button->setCallback(cb);
         button->setFixedHeight(25);
         if (mLayout->rowCount() > 0)
@@ -315,23 +315,23 @@ NAMESPACE_BEGIN(detail)
 /**
  * A specialization for adding a CheckBox to a FormHelper.
  */
-template <> class FormWidget<bool, std::true_type> : public CheckBox {
-public:
-    /// Creates a new FormWidget with underlying type CheckBox.
-    FormWidget(Widget *p) : CheckBox(p, "") { setFixedWidth(20); }
-
-    /// Pass-through function for \ref nanogui::CheckBox::setChecked.
-    void setValue(bool v) { setChecked(v); }
-
-    /// Pass-through function for \ref nanogui::Widget::setEnabled.
-    void setEditable(bool e) { setEnabled(e); }
-
-    /// Returns the value of \ref nanogui::CheckBox::checked.
-    bool value() const { return checked(); }
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+//template <> class FormWidget<bool, std::true_type> : public CheckBox {
+//public:
+//    /// Creates a new FormWidget with underlying type CheckBox.
+//    FormWidget(Widget *p) : CheckBox(p, "") { setFixedWidth(20); }
+//
+//    /// Pass-through function for \ref nanogui::CheckBox::setChecked.
+//    void setValue(bool v) { setChecked(v); }
+//
+//    /// Pass-through function for \ref nanogui::Widget::setEnabled.
+//    void setEditable(bool e) { setEnabled(e); }
+//
+//    /// Returns the value of \ref nanogui::CheckBox::checked.
+//    bool value() const { return checked(); }
+//
+//public:
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//};
 
 /**
  * A specialization for adding a ComboBox to a FormHelper.
@@ -339,28 +339,28 @@ public:
  * \tparam T
  *     The type being used inside the ComboBox.
  */
-template <typename T> class FormWidget<T, typename std::is_enum<T>::type> : public ComboBox {
-public:
-    /// Creates a new FormWidget with underlying type ComboBox.
-    FormWidget(Widget *p) : ComboBox(p) { }
-
-    /// Pass-through function for \ref nanogui::ComboBox::selectedIndex.
-    T value() const { return (T) selectedIndex(); }
-
-    /// Pass-through function for \ref nanogui::ComboBox::setSelectedIndex.
-    void setValue(T value) { setSelectedIndex((int) value); mSelectedIndex = (int) value; }
-
-    /// Pass-through function for \ref nanogui::ComboBox::setCallback.
-    void setCallback(const std::function<void(const T &)> &cb) {
-        ComboBox::setCallback([cb](int v) { cb((T) v); });
-    }
-
-    /// Pass-through function for \ref nanogui::Widget::setEnabled.
-    void setEditable(bool e) { setEnabled(e); }
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+//template <typename T> class FormWidget<T, typename std::is_enum<T>::type> : public ComboBox {
+//public:
+//    /// Creates a new FormWidget with underlying type ComboBox.
+//    FormWidget(Widget *p) : ComboBox(p) { }
+//
+//    /// Pass-through function for \ref nanogui::ComboBox::selectedIndex.
+//    T value() const { return (T) selectedIndex(); }
+//
+//    /// Pass-through function for \ref nanogui::ComboBox::setSelectedIndex.
+//    void setValue(T value) { setSelectedIndex((int) value); mSelectedIndex = (int) value; }
+//
+//    /// Pass-through function for \ref nanogui::ComboBox::setCallback.
+//    void setCallback(const std::function<void(const T &)> &cb) {
+//        ComboBox::setCallback([cb](int v) { cb((T) v); });
+//    }
+//
+//    /// Pass-through function for \ref nanogui::Widget::setEnabled.
+//    void setEditable(bool e) { setEnabled(e); }
+//
+//public:
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//};
 
 /**
  * A specialization for adding an IntBox to a FormHelper.
@@ -368,14 +368,14 @@ public:
  * \tparam T
  *     The **integral** type being used for the IntBox.
  */
-template <typename T> class FormWidget<T, typename std::is_integral<T>::type> : public IntBox<T> {
-public:
-    /// Creates a new FormWidget with underlying type IntBox.
-    FormWidget(Widget *p) : IntBox<T>(p) { this->setAlignment(TextBox::Alignment::Right); }
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+//template <typename T> class FormWidget<T, typename std::is_integral<T>::type> : public IntBox<T> {
+//public:
+//    /// Creates a new FormWidget with underlying type IntBox.
+//    FormWidget(Widget *p) : IntBox<T>(p) { this->setAlignment(TextBox::Alignment::Right); }
+//
+//public:
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//};
 
 /**
  * A specialization for adding a FloatBox to a FormHelper.
@@ -383,14 +383,14 @@ public:
  * \tparam T
  *     The **floating point** type being used for the FloatBox.
  */
-template <typename T> class FormWidget<T, typename std::is_floating_point<T>::type> : public FloatBox<T> {
-public:
-    /// Creates a new FormWidget with underlying type FloatBox.
-    FormWidget(Widget *p) : FloatBox<T>(p) { this->setAlignment(TextBox::Alignment::Right); }
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+//template <typename T> class FormWidget<T, typename std::is_floating_point<T>::type> : public FloatBox<T> {
+//public:
+//    /// Creates a new FormWidget with underlying type FloatBox.
+//    FormWidget(Widget *p) : FloatBox<T>(p) { this->setAlignment(TextBox::Alignment::Right); }
+//
+//public:
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//};
 
 /**
  * A specialization for adding a TextBox to a FormHelper.
@@ -412,23 +412,23 @@ public:
 /**
  * A specialization for adding a ColorPicker to a FormHelper.
  */
-template <> class FormWidget<Color, std::true_type> : public ColorPicker {
-public:
-    /// Creates a new FormWidget with underlying type ColorPicker.
-    FormWidget(Widget *p) : ColorPicker(p) { }
-
-    /// Pass-through function for \ref nanogui::ColorPicker::setColor.
-    void setValue(const Color &c) { setColor(c); }
-
-    /// Pass-through function for \ref nanogui::Widget::setEnabled.
-    void setEditable(bool e) { setEnabled(e); }
-
-    /// Returns the value of \ref nanogui::ColorPicker::color.
-    Color value() const { return color(); }
-
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-};
+//template <> class FormWidget<Color, std::true_type> : public ColorPicker {
+//public:
+//    /// Creates a new FormWidget with underlying type ColorPicker.
+//    FormWidget(Widget *p) : ColorPicker(p) { }
+//
+//    /// Pass-through function for \ref nanogui::ColorPicker::setColor.
+//    void setValue(const Color &c) { setColor(c); }
+//
+//    /// Pass-through function for \ref nanogui::Widget::setEnabled.
+//    void setEditable(bool e) { setEnabled(e); }
+//
+//    /// Returns the value of \ref nanogui::ColorPicker::color.
+//    Color value() const { return color(); }
+//
+//public:
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//};
 
 NAMESPACE_END(detail)
 NAMESPACE_END(nanogui)
