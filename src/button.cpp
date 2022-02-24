@@ -197,7 +197,6 @@ void Button::draw(skity::Canvas *canvas) {
       mTheme->mButtonCornerRadius, mTheme->mButtonCornerRadius);
   canvas->drawPath(stroke_path, mStylePaint);
 
-
   float tw = 0.f;
   float descent = 0.f;
   if (mCaptionBlob) {
@@ -229,8 +228,12 @@ void Button::draw(skity::Canvas *canvas) {
     iconPos.y() -= 1.f;
 
     if (mIconPosition == IconPosition::LeftCentered) {
-      iconPos.x() -= (tw + iw) * 0.5f;
-      textPos.x() += tw * 0.5f;
+      if (tw != 0.f) {
+        iconPos.x() -= (tw * 0.5f + iw);
+      } else {
+        iconPos.x() -= iw * 0.5f;
+      }
+      //      textPos.x() += tw * 0.5f;
     } else if (mIconPosition == IconPosition::RightCentered) {
       iconPos.x() -= iw * 0.5f;
       textPos.x() += tw * 0.5f;

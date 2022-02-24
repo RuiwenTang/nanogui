@@ -35,6 +35,10 @@ Vector2i Window::preferredSize() const {
   Vector2i result = Widget::preferredSize();
   if (mButtonPanel) mButtonPanel->setVisible(true);
 
+  if (mTitleBlob == nullptr) {
+    return result;
+  }
+
   auto bounds = mTitleBlob->getBoundSize();
   // make some space for text shadow
   bounds.x += 2.f;
@@ -82,7 +86,7 @@ void Window::draw(skity::Canvas *canvas) {
   // draw shadow
   {
     mStylePaint.setMaskFilter(skity::MaskFilter::MakeBlur(
-        skity::kNormal, mTheme->mWindowDropShadowSize));
+        skity::kOuter, mTheme->mWindowDropShadowSize));
 
     mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
 
@@ -142,7 +146,7 @@ void Window::draw(skity::Canvas *canvas) {
     mStylePaint.setStyle(skity::Paint::kFill_Style);
     {
       mStylePaint.setMaskFilter(
-          skity::MaskFilter::MakeBlur(skity::kNormal, 4.f));
+          skity::MaskFilter::MakeBlur(skity::kOuter, 4.f));
       mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
 
       canvas->drawTextBlob(mTitleBlob.get(),

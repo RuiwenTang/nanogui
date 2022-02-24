@@ -48,32 +48,38 @@ void Popup::draw(skity::Canvas *canvas) {
 
   int ds = mTheme->mWindowDropShadowSize, cr = mTheme->mWindowCornerRadius;
 
-  //  nvgSave(ctx);
-  //  nvgResetScissor(ctx);
-  //
-  //  /* Draw a drop shadow */
-  //  NVGpaint shadowPaint =
-  //      nvgBoxGradient(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr * 2,
-  //                     ds * 2, mTheme->mDropShadow, mTheme->mTransparent);
-  //
-  //  nvgBeginPath(ctx);
-  //  nvgRect(ctx, mPos.x() - ds, mPos.y() - ds, mSize.x() + 2 * ds,
-  //          mSize.y() + 2 * ds);
-  //  nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr);
-  //  nvgPathWinding(ctx, NVG_HOLE);
-  //  nvgFillPaint(ctx, shadowPaint);
-  //  nvgFill(ctx);
-  //
-  //  /* Draw window */
-  //  nvgBeginPath(ctx);
-  //  nvgRoundedRect(ctx, mPos.x(), mPos.y(), mSize.x(), mSize.y(), cr);
-  //
-  //  Vector2i base = mPos + Vector2i(0, mAnchorHeight);
-  //  int sign = -1;
-  //  if (mSide == Side::Left) {
-  //    base.x() += mSize.x();
-  //    sign = 1;
-  //  }
+  skity::Paint paint;
+  paint.setStyle(skity::Paint::kFill_Style);
+
+  skity::RRect bounds_rrect = skity::RRect::MakeRectXY(
+      skity::Rect::MakeXYWH(0, 0, mSize.x(), mSize.y()), cr, cr);
+
+  /* Draw a drop shadow */
+  paint.setMaskFilter(skity::MaskFilter::MakeBlur(skity::kOuter, ds));
+  paint.SetFillColor(mTheme->mDropShadow.toColor());
+  canvas->drawRRect(bounds_rrect, paint);
+
+  paint.setMaskFilter(nullptr);
+  paint.SetFillColor(mTheme->mWindowPopup.toColor());
+
+  /* Draw window */
+  canvas->drawRRect(bounds_rrect, paint);
+
+  skity::Path path;
+  Vector2i base = Vector2i(0, mAnchorHeight);
+  int sign = -1;
+  if (mSide == Side::Left) {
+    base.x() += mSize.x();
+    sign = 1;
+  }
+
+  path.moveTo(base.x() + 15 * sign, base.y());
+  path.lineTo(base.x() - 1 * sign, base.y() - 15);
+  path.lineTo(base.x() - 1 * sign, base.y() + 15);
+  path.close();
+
+  canvas->drawPath(path, paint);
+
   //
   //  nvgMoveTo(ctx, base.x() + 15 * sign, base.y());
   //  nvgLineTo(ctx, base.x() - 1 * sign, base.y() - 15);
@@ -82,7 +88,6 @@ void Popup::draw(skity::Canvas *canvas) {
   //  nvgFillColor(ctx, mTheme->mWindowPopup);
   //  nvgFill(ctx);
   //  nvgRestore(ctx);
-
   Widget::draw(canvas);
 }
 

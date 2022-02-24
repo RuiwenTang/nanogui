@@ -11,18 +11,18 @@
 
 #pragma once
 
+#include <nanogui/button.h>
+#include <nanogui/checkbox.h>
 #include <nanogui/common.h>
 #include <nanogui/label.h>
 #include <nanogui/layout.h>
+#include <nanogui/popup.h>
+#include <nanogui/popupbutton.h>
 #include <nanogui/screen.h>
 #include <nanogui/theme.h>
+#include <nanogui/toolbutton.h>
 #include <nanogui/widget.h>
 #include <nanogui/window.h>
-// #include <nanogui/checkbox.h>
-#include <nanogui/button.h>
-#include <nanogui/popup.h>
-#include <nanogui/toolbutton.h>
-// #include <nanogui/popupbutton.h>
 // #include <nanogui/combobox.h>
 // #include <nanogui/progressbar.h>
 #include <nanogui/entypo.h>

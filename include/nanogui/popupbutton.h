@@ -13,8 +13,8 @@
 #pragma once
 
 #include <nanogui/button.h>
-#include <nanogui/popup.h>
 #include <nanogui/entypo.h>
+#include <nanogui/popup.h>
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -24,36 +24,45 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Button which launches a popup widget.
  *
  * \remark
- *     This class overrides \ref nanogui::Widget::mIconExtraScale to be ``0.8f``,
- *     which affects all subclasses of this Widget.  Subclasses must explicitly
- *     set a different value if needed (e.g., in their constructor).
+ *     This class overrides \ref nanogui::Widget::mIconExtraScale to be
+ * ``0.8f``, which affects all subclasses of this Widget.  Subclasses must
+ * explicitly set a different value if needed (e.g., in their constructor).
  */
 class NANOGUI_EXPORT PopupButton : public Button {
-public:
-    PopupButton(Widget *parent, const std::string &caption = "Untitled",
-                int buttonIcon = 0);
-    virtual ~PopupButton();
+ public:
+  PopupButton(Widget *parent, const std::string &caption = "Untitled",
+              const std::string &buttonIcon = "");
+  ~PopupButton() override;
 
-    void setChevronIcon(int icon) { mChevronIcon = icon; }
-    int chevronIcon() const { return mChevronIcon; }
+  void setChevronIcon(const std::string &icon);
+  std::string chevronIcon() const { return mChevronIcon; }
 
-    void setSide(Popup::Side popupSide);
-    Popup::Side side() const { return mPopup->side(); }
+  void setSide(Popup::Side popupSide);
+  Popup::Side side() const { return mPopup->side(); }
 
-    Popup *popup() { return mPopup; }
-    const Popup *popup() const { return mPopup; }
+  Popup *popup() { return mPopup; }
+  const Popup *popup() const { return mPopup; }
 
-    virtual void draw(NVGcontext* ctx) override;
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
-    virtual void performLayout(NVGcontext *ctx) override;
+  void draw(skity::Canvas *canvas) override;
+  Vector2i preferredSize() const override;
+  void performLayout() override;
 
-    virtual void save(Serializer &s) const override;
-    virtual bool load(Serializer &s) override;
-protected:
-    Popup *mPopup;
-    int mChevronIcon;
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  void save(Serializer &s) const override;
+  bool load(Serializer &s) override;
+
+ private:
+  void rebuildChevronBlob();
+
+ protected:
+  Popup *mPopup;
+  std::string mChevronIcon;
+
+ private:
+  skity::Paint mStylePaint;
+  std::shared_ptr<skity::TextBlob> mChevronBlob;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

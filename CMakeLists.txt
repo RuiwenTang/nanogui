@@ -330,6 +330,7 @@ add_library(nanogui-obj OBJECT
   # Fonts etc.
   nanogui_resources.cpp
   include/nanogui/common.h src/common.cpp
+  include/nanogui/checkbox.h src/checkbox.cpp
   include/nanogui/widget.h src/widget.cpp
   include/nanogui/theme.h src/theme.cpp
   include/nanogui/layout.h src/layout.cpp
@@ -338,6 +339,7 @@ add_library(nanogui-obj OBJECT
   include/nanogui/window.h src/window.cpp
   include/nanogui/button.h src/button.cpp
   include/nanogui/popup.h src/popup.cpp
+  include/nanogui/popupbutton.h src/popupbutton.cpp
   include/nanogui/textbox.h src/textbox.cpp
   include/nanogui/toolbutton.h
   include/nanogui/formhelper.h
