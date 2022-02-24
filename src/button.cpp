@@ -155,7 +155,7 @@ void Button::draw(skity::Canvas *canvas) {
   mStylePaint.setStyle(skity::Paint::kFill_Style);
   if (mBackgroundColor.w() != 0) {
     // nvgFillColor(ctx, Color(mBackgroundColor.head<3>(), 1.f));
-    mStylePaint.SetFillColor(mBackgroundColor.r(), mBackgroundColor.g(),
+    mStylePaint.setFillColor(mBackgroundColor.r(), mBackgroundColor.g(),
                              mBackgroundColor.b(), 1.f);
 
     canvas->drawPath(fill_path, mStylePaint);
@@ -187,7 +187,7 @@ void Button::draw(skity::Canvas *canvas) {
   mStylePaint.setShader(nullptr);
 
   mStylePaint.setStrokeWidth(1.f);
-  mStylePaint.SetStrokeColor(mTheme->mBorderLight.toColor());
+  mStylePaint.setStrokeColor(mTheme->mBorderLight.toColor());
   mStylePaint.setStyle(skity::Paint::kStroke_Style);
   skity::Path stroke_path;
   stroke_path.addRoundRect(
@@ -196,7 +196,7 @@ void Button::draw(skity::Canvas *canvas) {
       mTheme->mButtonCornerRadius, mTheme->mButtonCornerRadius);
   canvas->drawPath(stroke_path, mStylePaint);
 
-  mStylePaint.SetStrokeColor(mTheme->mBorderDark.toColor());
+  mStylePaint.setStrokeColor(mTheme->mBorderDark.toColor());
   skity::Path stroke_path2;
   stroke_path2.addRoundRect(
       skity::Rect::MakeXYWH(0.5f, 0.5f, mSize.x() - 1.f, mSize.y() - 2.f),
@@ -250,7 +250,7 @@ void Button::draw(skity::Canvas *canvas) {
       iconPos.x() = mSize.x() - iw - 8.f;
     }
 
-    mStylePaint.SetFillColor(textColor.toColor());
+    mStylePaint.setFillColor(textColor.toColor());
     mStylePaint.setTypeface(mTheme->mFontIcons);
     canvas->drawTextBlob(mIconBlob.get(), iconPos.x(),
                          iconPos.y() - descent * 0.5f, mStylePaint);
@@ -262,11 +262,11 @@ void Button::draw(skity::Canvas *canvas) {
 
   mStylePaint.setTextSize(getFontSize());
   mStylePaint.setStyle(skity::Paint::kFill_Style);
-  mStylePaint.SetFillColor(mTheme->mTextColorShadow.toColor());
+  mStylePaint.setFillColor(mTheme->mTextColorShadow.toColor());
 
   canvas->drawTextBlob(mCaptionBlob.get(), textPos.x(), textPos.y(),
                        mStylePaint);
-  mStylePaint.SetFillColor(textColor.toColor());
+  mStylePaint.setFillColor(textColor.toColor());
   canvas->drawTextBlob(mCaptionBlob.get(), textPos.x(), textPos.y() + 1.f,
                        mStylePaint);
 }

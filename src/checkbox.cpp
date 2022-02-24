@@ -80,7 +80,7 @@ void CheckBox::draw(skity::Canvas *canvas) {
   }
 
   float descent = mCaptionBlob->getBlobDescent();
-  mStylePaint.SetFillColor(mEnabled ? mTheme->mTextColor.toColor()
+  mStylePaint.setFillColor(mEnabled ? mTheme->mTextColor.toColor()
                                     : mTheme->mDisabledTextColor.toColor());
 
   canvas->drawTextBlob(mCaptionBlob.get(), 1.6f * fontSize(),
@@ -109,7 +109,7 @@ void CheckBox::draw(skity::Canvas *canvas) {
   canvas->drawRoundRect(rect, 3, 3, paint);
 
   if (mChecked && mIconBlob) {
-    mIconPaint.SetFillColor(mEnabled ? mTheme->mIconColor.toColor()
+    mIconPaint.setFillColor(mEnabled ? mTheme->mIconColor.toColor()
                                      : mTheme->mDisabledTextColor.toColor());
 
     float icon_descent = mIconBlob->getBlobDescent();

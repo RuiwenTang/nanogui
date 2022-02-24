@@ -60,7 +60,7 @@ void PopupButton::draw(skity::Canvas *canvas) {
   if (mChevronBlob) {
     auto color = mTextColor.w() == 0 ? mTheme->mTextColor : mTextColor;
 
-    mStylePaint.SetFillColor(mEnabled ? color.toColor()
+    mStylePaint.setFillColor(mEnabled ? color.toColor()
                                       : mTheme->mDisabledTextColor.toColor());
 
     float descent = mChevronBlob->getBlobDescent();

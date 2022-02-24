@@ -56,11 +56,11 @@ void Popup::draw(skity::Canvas *canvas) {
 
   /* Draw a drop shadow */
   paint.setMaskFilter(skity::MaskFilter::MakeBlur(skity::kOuter, ds));
-  paint.SetFillColor(mTheme->mDropShadow.toColor());
+  paint.setFillColor(mTheme->mDropShadow.toColor());
   canvas->drawRRect(bounds_rrect, paint);
 
   paint.setMaskFilter(nullptr);
-  paint.SetFillColor(mTheme->mWindowPopup.toColor());
+  paint.setFillColor(mTheme->mWindowPopup.toColor());
 
   /* Draw window */
   canvas->drawRRect(bounds_rrect, paint);

@@ -27,7 +27,7 @@ Label::Label(Widget *parent, const std::string &caption,
 
   mStylePaint.setStyle(skity::Paint::kFill_Style);
   mStylePaint.setTextSize(mFontSize);
-  mStylePaint.SetFillColor(mColor.toColor());
+  mStylePaint.setFillColor(mColor.toColor());
   if (mFont == "sans-bold") {
     mStylePaint.setTypeface(mTheme->mFontBold);
   } else {
@@ -52,7 +52,7 @@ void Label::setTheme(Theme *theme) {
   }
 
   mStylePaint.setTextSize(mFontSize);
-  mStylePaint.SetFillColor(mColor.toColor());
+  mStylePaint.setFillColor(mColor.toColor());
 
   mCaptionBlob = nullptr;
   rebuildCaptionBlob();

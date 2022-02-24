@@ -88,7 +88,7 @@ void Window::draw(skity::Canvas *canvas) {
     mStylePaint.setMaskFilter(skity::MaskFilter::MakeBlur(
         skity::kOuter, mTheme->mWindowDropShadowSize));
 
-    mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
+    mStylePaint.setFillColor(mTheme->mDropShadow.toColor());
 
     canvas->drawPath(bound_path, mStylePaint);
     mStylePaint.setMaskFilter(nullptr);
@@ -99,7 +99,7 @@ void Window::draw(skity::Canvas *canvas) {
   auto color =
       mMouseFocus ? mTheme->mWindowFillFocused : mTheme->mWindowFillUnfocused;
 
-  mStylePaint.SetFillColor(color.toColor());
+  mStylePaint.setFillColor(color.toColor());
 
   canvas->drawPath(bound_path, mStylePaint);
 
@@ -131,7 +131,7 @@ void Window::draw(skity::Canvas *canvas) {
 
     mStylePaint.setStyle(skity::Paint::kStroke_Style);
     mStylePaint.setStrokeWidth(1.f);
-    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepTop.toColor());
+    mStylePaint.setStrokeColor(mTheme->mWindowHeaderSepTop.toColor());
 
     canvas->drawRRect(header_round, mStylePaint);
 
@@ -139,7 +139,7 @@ void Window::draw(skity::Canvas *canvas) {
     line_path.moveTo(0.5f, hh - 1.5f);
     line_path.lineTo(mSize.x() - 0.5f, hh - 1.5f);
 
-    mStylePaint.SetStrokeColor(mTheme->mWindowHeaderSepBot.toColor());
+    mStylePaint.setStrokeColor(mTheme->mWindowHeaderSepBot.toColor());
 
     canvas->drawPath(line_path, mStylePaint);
 
@@ -147,7 +147,7 @@ void Window::draw(skity::Canvas *canvas) {
     {
       mStylePaint.setMaskFilter(
           skity::MaskFilter::MakeBlur(skity::kOuter, 4.f));
-      mStylePaint.SetFillColor(mTheme->mDropShadow.toColor());
+      mStylePaint.setFillColor(mTheme->mDropShadow.toColor());
 
       canvas->drawTextBlob(mTitleBlob.get(),
                            (mSize.x() - title_bounds.x) * 0.5f, hh + offset_y,
@@ -159,7 +159,7 @@ void Window::draw(skity::Canvas *canvas) {
     auto title_color =
         mFocused ? mTheme->mWindowTitleFocused : mTheme->mWindowTitleUnfocused;
 
-    mStylePaint.SetFillColor(title_color.toColor());
+    mStylePaint.setFillColor(title_color.toColor());
     canvas->drawTextBlob(mTitleBlob.get(), (mSize.x() - title_bounds.x) * 0.5f,
                          hh + offset_y - 1, mStylePaint);
   }
