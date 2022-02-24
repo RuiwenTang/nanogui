@@ -156,7 +156,7 @@ void Button::draw(skity::Canvas *canvas) {
   if (mBackgroundColor.w() != 0) {
     // nvgFillColor(ctx, Color(mBackgroundColor.head<3>(), 1.f));
     mStylePaint.SetFillColor(mBackgroundColor.r(), mBackgroundColor.g(),
-                             mBackgroundColor.b(), mBackgroundColor.w());
+                             mBackgroundColor.b(), 1.f);
 
     canvas->drawPath(fill_path, mStylePaint);
 
@@ -187,8 +187,7 @@ void Button::draw(skity::Canvas *canvas) {
   mStylePaint.setShader(nullptr);
 
   mStylePaint.setStrokeWidth(1.f);
-  mStylePaint.SetStrokeColor(mTheme->mBorderLight.r(), mTheme->mBorderLight.g(),
-                             mTheme->mBorderLight.b(), 1.f);
+  mStylePaint.SetStrokeColor(mTheme->mBorderLight.toColor());
   mStylePaint.setStyle(skity::Paint::kStroke_Style);
   skity::Path stroke_path;
   stroke_path.addRoundRect(
@@ -196,6 +195,14 @@ void Button::draw(skity::Canvas *canvas) {
                             mSize.y() - 1.f - (mPushed ? 0.0f : 1.0f)),
       mTheme->mButtonCornerRadius, mTheme->mButtonCornerRadius);
   canvas->drawPath(stroke_path, mStylePaint);
+
+  mStylePaint.SetStrokeColor(mTheme->mBorderDark.toColor());
+  skity::Path stroke_path2;
+  stroke_path2.addRoundRect(
+      skity::Rect::MakeXYWH(0.5f, 0.5f, mSize.x() - 1.f, mSize.y() - 2.f),
+      mTheme->mButtonCornerRadius, mTheme->mButtonCornerRadius);
+
+  canvas->drawPath(stroke_path2, mStylePaint);
 
   float tw = 0.f;
   float descent = 0.f;
