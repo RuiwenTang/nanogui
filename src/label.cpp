@@ -30,6 +30,8 @@ Label::Label(Widget *parent, const std::string &caption,
   mStylePaint.setFillColor(mColor.toColor());
   if (mFont == "sans-bold") {
     mStylePaint.setTypeface(mTheme->mFontBold);
+  } else if (mFont == "icons") {
+    mStylePaint.setTypeface(mTheme->mFontIcons);
   } else {
     mStylePaint.setTypeface(mTheme->mFontNormal);
   }
@@ -101,6 +103,21 @@ bool Label::load(Serializer &s) {
   if (!s.get("font", mFont)) return false;
   if (!s.get("color", mColor)) return false;
   return true;
+}
+
+void Label::onSetFontSize() {
+  if (mCaption.empty()) {
+    return;
+  }
+
+  if (mFontSize == mStylePaint.getTextSize()) {
+    return;
+  }
+
+  mStylePaint.setTextSize(mFontSize);
+  mCaptionBlob = nullptr;
+
+  rebuildCaptionBlob();
 }
 
 NAMESPACE_END(nanogui)

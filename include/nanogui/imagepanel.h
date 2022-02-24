@@ -23,33 +23,42 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Image panel widget which shows a number of square-shaped icons.
  */
 class NANOGUI_EXPORT ImagePanel : public Widget {
-public:
-    typedef std::vector<std::pair<int, std::string>> Images;
-public:
-    ImagePanel(Widget *parent);
+ public:
+  typedef std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>>
+      Images;
 
-    void setImages(const Images &data) { mImages = data; }
-    const Images& images() const { return mImages; }
+ public:
+  ImagePanel(Widget *parent);
 
-    std::function<void(int)> callback() const { return mCallback; }
-    void setCallback(const std::function<void(int)> &callback) { mCallback = callback; }
+  void setImages(const Images &data) { mImages = data; }
+  const Images &images() const { return mImages; }
 
-    virtual bool mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
-    virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) override;
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
-    virtual void draw(NVGcontext* ctx) override;
-protected:
-    Vector2i gridSize() const;
-    int indexForPosition(const Vector2i &p) const;
-protected:
-    Images mImages;
-    std::function<void(int)> mCallback;
-    int mThumbSize;
-    int mSpacing;
-    int mMargin;
-    int mMouseIndex;
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  std::function<void(int)> callback() const { return mCallback; }
+  void setCallback(const std::function<void(int)> &callback) {
+    mCallback = callback;
+  }
+
+  bool mouseMotionEvent(const Vector2i &p, const Vector2i &rel, int button,
+                        int modifiers) override;
+  bool mouseButtonEvent(const Vector2i &p, int button, bool down,
+                        int modifiers) override;
+  Vector2i preferredSize() const override;
+  void draw(skity::Canvas *canvas) override;
+
+ protected:
+  Vector2i gridSize() const;
+  int indexForPosition(const Vector2i &p) const;
+
+ protected:
+  Images mImages;
+  std::function<void(int)> mCallback;
+  int mThumbSize;
+  int mSpacing;
+  int mMargin;
+  int mMouseIndex;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

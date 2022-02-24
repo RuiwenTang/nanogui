@@ -72,13 +72,65 @@ int main(int argc, const char** argv) {
   // popup left
   popupBtn = new PopupButton(popup, "Recursive popup", ENTYPO_ICON_FLASH);
   popupBtn->setSide(Popup::Side::Left);
-  Popup *popupLeft = popupBtn->popup();
+  Popup* popupLeft = popupBtn->popup();
   popupLeft->setLayout(new GroupLayout());
   new CheckBox(popupLeft, "Another check box");
 
+  window = new Window(screen, "Basic widgets");
+  window->setPosition(Vector2i(300, 15));
+  window->setLayout(new GroupLayout());
+
+  new Label(window, "Message dialog", "sans-bold");
+  tools = new Widget(window);
+  tools->setLayout(
+      new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 6));
+
+  b = new Button(tools, "Info", "");
+  b->setCallback([&] {
+    auto dlg = new MessageDialog(screen, MessageDialog::Type::Information,
+                                 "Title", "This is an information message");
+    dlg->setCallback([](int result) {
+      std::cout << "Dialog result: " << result << std::endl;
+    });
+  });
+  b = new Button(tools, "Warn", "");
+  b->setCallback([&] {
+    auto dlg = new MessageDialog(screen, MessageDialog::Type::Warning, "Title",
+                                 "This is a warning message");
+    dlg->setCallback([](int result) {
+      std::cout << "Dialog result: " << result << std::endl;
+    });
+  });
+
+  b = new Button(tools, "Ask", "");
+  b->setCallback([&] {
+    auto dlg =
+        new MessageDialog(screen, MessageDialog::Type::Warning, "Title",
+                          "This is a question message", "Yes", "No", true);
+    dlg->setCallback([](int result) {
+      std::cout << "Dialog result: " << result << std::endl;
+    });
+  });
+
+  new Label(window, "Image panel & scroll panel", "sans-bold");
+  PopupButton* imagePanelBtn = new PopupButton(window, "Image Panel");
+  imagePanelBtn->setIconStr(ENTYPO_ICON_FOLDER);
+  popup = imagePanelBtn->popup();
+  VScrollPanel *vscroll = new VScrollPanel(popup);
+
+  std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>> icons =
+      loadImageDirectory("icons");
+#if defined(_WIN32)
+  string resourcesFolderPath("../resources/");
+#else
+  std::string resourcesFolderPath("./");
+#endif
+  ImagePanel *imgPanel = new ImagePanel(vscroll);
+  imgPanel->setImages(icons);
+  popup->setFixedSize(Vector2i(245, 150));
+
   screen->setVisible(true);
   screen->performLayout();
-  window->center();
 
   nanogui::mainloop();
 

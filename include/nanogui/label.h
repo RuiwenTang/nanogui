@@ -58,6 +58,9 @@ class NANOGUI_EXPORT Label : public Widget {
   bool load(Serializer &s) override;
 
  protected:
+  void onSetFontSize() override;
+
+ protected:
   std::string mCaption;
   std::string mFont;
   Color mColor;

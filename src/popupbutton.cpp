@@ -25,7 +25,7 @@ PopupButton::PopupButton(Widget *parent, const std::string &caption,
 
   Window *parentWindow = window();
   mPopup = new Popup(parentWindow->parent(), window());
-  mPopup->setSize(Vector2i(320, 150));
+  mPopup->setSize(Vector2i(320, 250));
   mPopup->setVisible(false);
 
   mIconExtraScale = 0.8f;  // widget override

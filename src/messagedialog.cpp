@@ -27,13 +27,13 @@ MessageDialog::MessageDialog(Widget *parent, Type type, const std::string &title
     Widget *panel1 = new Widget(this);
     panel1->setLayout(new BoxLayout(Orientation::Horizontal,
                                     Alignment::Middle, 10, 15));
-    int icon = 0;
+    std::string icon;
     switch (type) {
         case Type::Information: icon = mTheme->mMessageInformationIcon; break;
         case Type::Question: icon = mTheme->mMessageQuestionIcon; break;
         case Type::Warning: icon = mTheme->mMessageWarningIcon; break;
     }
-    Label *iconLabel = new Label(panel1, std::string(utf8(icon).data()), "icons");
+    Label *iconLabel = new Label(panel1, icon, "icons");
     iconLabel->setFontSize(50);
     mMessageLabel = new Label(panel1, message);
     mMessageLabel->setFixedWidth(200);

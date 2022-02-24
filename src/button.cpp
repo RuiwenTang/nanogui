@@ -227,16 +227,13 @@ void Button::draw(skity::Canvas *canvas) {
     float iw = icon_bounds.x;
     float ih = getFontSize();
 
-    if (!mCaption.empty()) {
-      iw += mSize.y() * 0.15f;
-    }
-
     auto iconPos = center;
     iconPos.y() -= 1.f;
 
     if (mIconPosition == IconPosition::LeftCentered) {
       if (tw != 0.f) {
-        iconPos.x() -= (tw * 0.5f + iw);
+        iconPos.x() -= tw * 0.5f + iw * 1.5f;
+        if(iconPos.x() < 0) iconPos.x() = 0;
       } else {
         iconPos.x() -= iw * 0.5f;
       }

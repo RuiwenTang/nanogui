@@ -26,12 +26,12 @@
 // #include <nanogui/combobox.h>
 // #include <nanogui/progressbar.h>
 #include <nanogui/entypo.h>
-// #include <nanogui/messagedialog.h>
+#include <nanogui/messagedialog.h>
 // #include <nanogui/textbox.h>
 // #include <nanogui/slider.h>
-// #include <nanogui/imagepanel.h>
+#include <nanogui/imagepanel.h>
 // #include <nanogui/imageview.h>
-// #include <nanogui/vscrollpanel.h>
+#include <nanogui/vscrollpanel.h>
 // #include <nanogui/colorwheel.h>
 // #include <nanogui/graph.h>
 #include <nanogui/formhelper.h>

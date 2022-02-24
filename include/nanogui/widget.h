@@ -189,7 +189,7 @@ public:
     /// Return current font size. If not set the default of the current theme will be returned
     int fontSize() const;
     /// Set the font size of this widget
-    void setFontSize(int fontSize) { mFontSize = fontSize; }
+    void setFontSize(int fontSize);
     /// Return whether the font size is explicitly specified for this widget
     bool hasFontSize() const { return mFontSize > 0; }
 
@@ -274,6 +274,7 @@ protected:
      */
     inline float icon_scale() const { return mTheme->mIconScale * mIconExtraScale; }
 
+    virtual void onSetFontSize() {}
 protected:
     Widget *mParent;
     ref<Theme> mTheme;

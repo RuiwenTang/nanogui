@@ -53,6 +53,11 @@ int Widget::fontSize() const {
   return (mFontSize < 0 && mTheme) ? mTheme->mStandardFontSize : mFontSize;
 }
 
+void Widget::setFontSize(int fontSize) {
+  mFontSize = fontSize;
+  onSetFontSize();
+}
+
 Vector2i Widget::preferredSize() const {
   if (mLayout)
     return mLayout->preferredSize(this);

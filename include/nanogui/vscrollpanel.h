@@ -32,13 +32,13 @@ public:
     /// Set the scroll amount to a value between 0 and 1. 0 means scrolled to the top and 1 to the bottom.
     void setScroll(float scroll) { mScroll = scroll; }
 
-    virtual void performLayout(NVGcontext *ctx) override;
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
-    virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
-    virtual bool scrollEvent(const Vector2i &p, const Vector2f &rel) override;
-    virtual void draw(NVGcontext *ctx) override;
-    virtual void save(Serializer &s) const override;
-    virtual bool load(Serializer &s) override;
+    void performLayout() override;
+    Vector2i preferredSize() const override;
+    bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
+    bool scrollEvent(const Vector2i &p, const Vector2f &rel) override;
+    void draw(skity::Canvas *canvas) override;
+    void save(Serializer &s) const override;
+    bool load(Serializer &s) override;
 protected:
     int mChildPreferredHeight;
     float mScroll;
