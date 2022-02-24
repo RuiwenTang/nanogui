@@ -30,7 +30,7 @@
 // #include <nanogui/textbox.h>
 // #include <nanogui/slider.h>
 #include <nanogui/imagepanel.h>
-// #include <nanogui/imageview.h>
+#include <nanogui/imageview.h>
 #include <nanogui/vscrollpanel.h>
 // #include <nanogui/colorwheel.h>
 // #include <nanogui/graph.h>

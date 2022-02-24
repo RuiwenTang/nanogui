@@ -129,6 +129,23 @@ int main(int argc, const char** argv) {
   imgPanel->setImages(icons);
   popup->setFixedSize(Vector2i(245, 150));
 
+  auto imageWindow = new Window(screen, "Selected image");
+  imageWindow->setPosition(Vector2i(710, 15));
+  imageWindow->setLayout(new GroupLayout());
+
+  auto imageView = new ImageView(imageWindow, icons[0].first);
+  int mCurrentImage;
+  mCurrentImage = 0;
+  // Change the active textures.
+  imgPanel->setCallback([&mCurrentImage, imageView, icons](int i) {
+    imageView->bindImage(icons[i].first);
+    mCurrentImage = i;
+    std::cout << "Selected item " << i << '\n';
+  });
+
+  imageView->setGridThreshold(20);
+  imageView->setPixelInfoThreshold(20);
+
   screen->setVisible(true);
   screen->performLayout();
 

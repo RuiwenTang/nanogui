@@ -340,6 +340,7 @@ add_library(nanogui-obj OBJECT
   include/nanogui/button.h src/button.cpp
   include/nanogui/popup.h src/popup.cpp
   include/nanogui/imagepanel.h src/imagepanel.cpp
+  include/nanogui/imageview.h src/imageview.cpp
   include/nanogui/popupbutton.h src/popupbutton.cpp
   include/nanogui/messagedialog.h src/messagedialog.cpp
   include/nanogui/vscrollpanel.h src/vscrollpanel.cpp
