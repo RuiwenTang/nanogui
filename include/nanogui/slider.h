@@ -22,43 +22,54 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Fractional slider widget with mouse control.
  */
 class NANOGUI_EXPORT Slider : public Widget {
-public:
-    Slider(Widget *parent);
+ public:
+  Slider(Widget *parent);
 
-    float value() const { return mValue; }
-    void setValue(float value) { mValue = value; }
+  float value() const { return mValue; }
+  void setValue(float value) { mValue = value; }
 
-    const Color &highlightColor() const { return mHighlightColor; }
-    void setHighlightColor(const Color &highlightColor) { mHighlightColor = highlightColor; }
+  const Color &highlightColor() const { return mHighlightColor; }
+  void setHighlightColor(const Color &highlightColor) {
+    mHighlightColor = highlightColor;
+  }
 
-    std::pair<float, float> range() const { return mRange; }
-    void setRange(std::pair<float, float> range) { mRange = range; }
+  std::pair<float, float> range() const { return mRange; }
+  void setRange(std::pair<float, float> range) { mRange = range; }
 
-    std::pair<float, float> highlightedRange() const { return mHighlightedRange; }
-    void setHighlightedRange(std::pair<float, float> highlightedRange) { mHighlightedRange = highlightedRange; }
+  std::pair<float, float> highlightedRange() const { return mHighlightedRange; }
+  void setHighlightedRange(std::pair<float, float> highlightedRange) {
+    mHighlightedRange = highlightedRange;
+  }
 
-    std::function<void(float)> callback() const { return mCallback; }
-    void setCallback(const std::function<void(float)> &callback) { mCallback = callback; }
+  std::function<void(float)> callback() const { return mCallback; }
+  void setCallback(const std::function<void(float)> &callback) {
+    mCallback = callback;
+  }
 
-    std::function<void(float)> finalCallback() const { return mFinalCallback; }
-    void setFinalCallback(const std::function<void(float)> &callback) { mFinalCallback = callback; }
+  std::function<void(float)> finalCallback() const { return mFinalCallback; }
+  void setFinalCallback(const std::function<void(float)> &callback) {
+    mFinalCallback = callback;
+  }
 
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
-    virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button, int modifiers) override;
-    virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) override;
-    virtual void draw(NVGcontext* ctx) override;
-    virtual void save(Serializer &s) const override;
-    virtual bool load(Serializer &s) override;
+  Vector2i preferredSize() const override;
+  bool mouseDragEvent(const Vector2i &p, const Vector2i &rel, int button,
+                      int modifiers) override;
+  bool mouseButtonEvent(const Vector2i &p, int button, bool down,
+                        int modifiers) override;
+  void draw(skity::Canvas *canvas) override;
+  void save(Serializer &s) const override;
+  bool load(Serializer &s) override;
 
-protected:
-    float mValue;
-    std::function<void(float)> mCallback;
-    std::function<void(float)> mFinalCallback;
-    std::pair<float, float> mRange;
-    std::pair<float, float> mHighlightedRange;
-    Color mHighlightColor;
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+ protected:
+  float mValue;
+  std::function<void(float)> mCallback;
+  std::function<void(float)> mFinalCallback;
+  std::pair<float, float> mRange;
+  std::pair<float, float> mHighlightedRange;
+  Color mHighlightColor;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

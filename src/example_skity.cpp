@@ -191,6 +191,40 @@ int main(int argc, const char** argv) {
   });
 
   new Label(window, "Combo box", "sans-bold");
+  new ComboBox(window,
+               {"Combo box item 1", "Combo box item 2", "Combo box item 3"});
+
+  new Label(window, "Check box", "sans-bold");
+  CheckBox* cb = new CheckBox(window, "Flag 1", [](bool state) {
+    std::cout << "Check box 1 state: " << state << std::endl;
+  });
+  cb->setChecked(true);
+  cb = new CheckBox(window, "Flag 2", [](bool state) {
+    std::cout << "Check box 2 state: " << state << std::endl;
+  });
+
+  new Label(window, "Progress bar", "sans-bold");
+
+  auto mProgress = new ProgressBar(window);
+  mProgress->setValue(0.3f);
+
+  new Label(window, "Slider and text box", "sans-bold");
+
+  Widget *panel = new Widget(window);
+  panel->setLayout(new BoxLayout(Orientation::Horizontal,
+                                 Alignment::Middle, 0, 20));
+
+  Slider *slider = new Slider(panel);
+  slider->setValue(0.5f);
+  slider->setFixedWidth(80);
+
+  TextBox *textBox = new TextBox(panel);
+  textBox->setFixedSize(Vector2i(60, 25));
+  textBox->setValue("50");
+  textBox->setUnits("%");
+  slider->setCallback([textBox](float value) {
+    textBox->setValue(std::to_string((int) (value * 100)));
+  });
 
   screen->setVisible(true);
   screen->performLayout();

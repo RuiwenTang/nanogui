@@ -22,21 +22,23 @@ NAMESPACE_BEGIN(nanogui)
  * \brief Standard widget for visualizing progress.
  */
 class NANOGUI_EXPORT ProgressBar : public Widget {
-public:
-    ProgressBar(Widget *parent);
+ public:
+  ProgressBar(Widget *parent);
 
-    float value() { return mValue; }
-    void setValue(float value) { mValue = value; }
+  float value() { return mValue; }
+  void setValue(float value) { mValue = value; }
 
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
-    virtual void draw(NVGcontext* ctx) override;
+  Vector2i preferredSize() const override;
+  void draw(skity::Canvas *canvas) override;
 
-    virtual void save(Serializer &s) const override;
-    virtual bool load(Serializer &s) override;
-protected:
-    float mValue;
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+  void save(Serializer &s) const override;
+  bool load(Serializer &s) override;
+
+ protected:
+  float mValue;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

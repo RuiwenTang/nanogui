@@ -342,9 +342,12 @@ add_library(nanogui-obj OBJECT
   include/nanogui/imagepanel.h src/imagepanel.cpp
   include/nanogui/imageview.h src/imageview.cpp
   include/nanogui/popupbutton.h src/popupbutton.cpp
+  include/nanogui/progressbar.h src/progressbar.cpp
   include/nanogui/messagedialog.h src/messagedialog.cpp
   include/nanogui/vscrollpanel.h src/vscrollpanel.cpp
   include/nanogui/textbox.h src/textbox.cpp
+  include/nanogui/combobox.h src/combobox.cpp
+  include/nanogui/slider.h src/slider.cpp
   include/nanogui/toolbutton.h
   include/nanogui/formhelper.h
   include/nanogui/nanogui.h

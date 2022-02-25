@@ -81,6 +81,8 @@ Vector2i TextBox::preferredSize() const {
     uw = w * uh / h;
   } else if (!mUnits.empty()) {
     if (mUnitsBlob == nullptr) {
+      mUnitsBlob =
+          skity::TextBlobBuilder().buildTextBlob(mUnits.c_str(), mStylePaint);
     }
 
     auto us = mUnitsBlob->getBoundSize();
@@ -106,219 +108,238 @@ Vector2i TextBox::preferredSize() const {
 void TextBox::draw(skity::Canvas *canvas) {
   Widget::draw(canvas);
 
-  //   NVGpaint bg =
-  //       nvgBoxGradient(ctx, mPos.x() + 1, mPos.y() + 1 + 1.0f, mSize.x() - 2,
-  //                      mSize.y() - 2, 3, 4, Color(255, 32), Color(32, 32));
-  //   NVGpaint fg1 =
-  //       nvgBoxGradient(ctx, mPos.x() + 1, mPos.y() + 1 + 1.0f, mSize.x() - 2,
-  //                      mSize.y() - 2, 3, 4, Color(150, 32), Color(32, 32));
-  //   NVGpaint fg2 = nvgBoxGradient(
-  //       ctx, mPos.x() + 1, mPos.y() + 1 + 1.0f, mSize.x() - 2, mSize.y() - 2,
-  //       3, 4, nvgRGBA(255, 0, 0, 100), nvgRGBA(255, 0, 0, 50));
+  skity::Paint bg;
+  bg.setStyle(skity::Paint::kFill_Style);
+  skity::Paint fg1;
+  fg1.setStyle(skity::Paint::kFill_Style);
+  skity::Paint fg2;
+  fg2.setStyle(skity::Paint::kFill_Style);
 
-  //   nvgBeginPath(ctx);
-  //   nvgRoundedRect(ctx, mPos.x() + 1, mPos.y() + 1 + 1.0f, mSize.x() - 2,
-  //                  mSize.y() - 2, 3);
+  std::array<skity::Point, 2> pts{};
+  std::array<skity::Color4f, 2> colors{};
 
-  //   if (mEditable && focused())
-  //     mValidFormat ? nvgFillPaint(ctx, fg1) : nvgFillPaint(ctx, fg2);
-  //   else if (mSpinnable && mMouseDownPos.x() != -1)
-  //     nvgFillPaint(ctx, fg1);
-  //   else
-  //     nvgFillPaint(ctx, bg);
+  pts[0].x = 1;
+  pts[0].y = 1 + 1.f;
+  pts[1].x = mSize.x() - 2;
+  pts[1].y = mSize.y() - 2;
+  colors[0] = Color{255, 32}.toColor();
+  colors[1] = Color{32, 32}.toColor();
 
-  //   nvgFill(ctx);
+  bg.setShader(
+      skity::Shader::MakeLinear(pts.data(), colors.data(), nullptr, 2));
 
-  //   nvgBeginPath(ctx);
-  //   nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + 0.5f, mSize.x() - 1,
-  //                  mSize.y() - 1, 2.5f);
-  //   nvgStrokeColor(ctx, Color(0, 48));
-  //   nvgStroke(ctx);
+  colors[0] = Color{150, 32}.toColor();
+  colors[1] = Color{32, 32}.toColor();
 
-  //   nvgFontSize(ctx, fontSize());
-  //   nvgFontFace(ctx, "sans");
-  //   Vector2i drawPos(mPos.x(), mPos.y() + mSize.y() * 0.5f + 1);
+  fg1.setShader(
+      skity::Shader::MakeLinear(pts.data(), colors.data(), nullptr, 2));
 
-  //   float xSpacing = mSize.y() * 0.3f;
+  colors[0] = Color(255, 0, 0, 100).toColor();
+  colors[1] = Color(255, 0, 0, 50).toColor();
 
-  //   float unitWidth = 0;
+  fg2.setShader(
+      skity::Shader::MakeLinear(pts.data(), colors.data(), nullptr, 2));
 
-  //   if (mUnitsImage > 0) {
-  //     int w, h;
-  //     nvgImageSize(ctx, mUnitsImage, &w, &h);
-  //     float unitHeight = mSize.y() * 0.4f;
-  //     unitWidth = w * unitHeight / h;
-  //     NVGpaint imgPaint =
-  //         nvgImagePattern(ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
-  //                         drawPos.y() - unitHeight * 0.5f, unitWidth,
-  //                         unitHeight, 0, mUnitsImage, mEnabled ? 0.7f :
-  //                         0.35f);
-  //     nvgBeginPath(ctx);
-  //     nvgRect(ctx, mPos.x() + mSize.x() - xSpacing - unitWidth,
-  //             drawPos.y() - unitHeight * 0.5f, unitWidth, unitHeight);
-  //     nvgFillPaint(ctx, imgPaint);
-  //     nvgFill(ctx);
-  //     unitWidth += 2;
-  //   } else if (!mUnits.empty()) {
-  //     unitWidth = nvgTextBounds(ctx, 0, 0, mUnits.c_str(), nullptr, nullptr);
-  //     nvgFillColor(ctx, Color(255, mEnabled ? 64 : 32));
-  //     nvgTextAlign(ctx, NVG_ALIGN_RIGHT | NVG_ALIGN_MIDDLE);
-  //     nvgText(ctx, mPos.x() + mSize.x() - xSpacing, drawPos.y(),
-  //     mUnits.c_str(),
-  //             nullptr);
-  //     unitWidth += 2;
-  //   }
+  skity::Rect rect =
+      skity::Rect::MakeXYWH(1, 1 + 1.f, mSize.x() - 2, mSize.y() - 2);
 
-  //   float spinArrowsWidth = 0.f;
+  skity::Paint *fill_paint = nullptr;
+  if (mEditable && focused()) {
+    if (mValidFormat) {
+      fill_paint = &fg1;
+    } else {
+      fill_paint = &fg2;
+    }
+  } else if (mSpinnable && mMouseDownPos.x() != -1) {
+    fill_paint = &fg1;
+  } else {
+    fill_paint = &bg;
+  }
 
-  //   if (mSpinnable && !focused()) {
-  //     spinArrowsWidth = 14.f;
+  canvas->drawRoundRect(rect, 3, 3, *fill_paint);
 
-  //     nvgFontFace(ctx, "icons");
-  //     nvgFontSize(ctx, ((mFontSize < 0) ? mTheme->mButtonFontSize :
-  //     mFontSize) *
-  //                          icon_scale());
+  rect = skity::Rect::MakeXYWH(0.5f, 0.5f, mSize.x() - 1, mSize.y() - 1);
 
-  //     bool spinning = mMouseDownPos.x() != -1;
+  skity::Paint paint;
+  paint.setStyle(skity::Paint::kStroke_Style);
+  paint.setStrokeWidth(1.f);
+  paint.setStrokeColor(Color{0, 48}.toColor());
 
-  //     /* up button */ {
-  //       bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Top;
-  //       nvgFillColor(ctx, (mEnabled && (hover || spinning))
-  //                             ? mTheme->mTextColor
-  //                             : mTheme->mDisabledTextColor);
-  //       auto icon = utf8(mTheme->mTextBoxUpIcon);
-  //       nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-  //       Vector2f iconPos(mPos.x() + 4.f,
-  //                        mPos.y() + mSize.y() / 2.f - xSpacing / 2.f);
-  //       nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
-  //     }
+  canvas->drawRoundRect(rect, 2.5f, 2.5f, paint);
 
-  //     /* down button */ {
-  //       bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Bottom;
-  //       nvgFillColor(ctx, (mEnabled && (hover || spinning))
-  //                             ? mTheme->mTextColor
-  //                             : mTheme->mDisabledTextColor);
-  //       auto icon = utf8(mTheme->mTextBoxDownIcon);
-  //       nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-  //       Vector2f iconPos(mPos.x() + 4.f,
-  //                        mPos.y() + mSize.y() / 2.f + xSpacing / 2.f + 1.5f);
-  //       nvgText(ctx, iconPos.x(), iconPos.y(), icon.data(), nullptr);
-  //     }
+  Vector2i drawPos(0, mSize.y());
 
-  //     nvgFontSize(ctx, fontSize());
-  //     nvgFontFace(ctx, "sans");
-  //   }
+  float xSpacing = mSize.y() * 0.1f;
 
-  //   switch (mAlignment) {
-  //     case Alignment::Left:
-  //       nvgTextAlign(ctx, NVG_ALIGN_LEFT | NVG_ALIGN_MIDDLE);
-  //       drawPos.x() += xSpacing + spinArrowsWidth;
-  //       break;
-  //     case Alignment::Right:
-  //       nvgTextAlign(ctx, NVG_ALIGN_RIGHT | NVG_ALIGN_MIDDLE);
-  //       drawPos.x() += mSize.x() - unitWidth - xSpacing;
-  //       break;
-  //     case Alignment::Center:
-  //       nvgTextAlign(ctx, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-  //       drawPos.x() += mSize.x() * 0.5f;
-  //       break;
-  //   }
+  float unitWidth = 0;
+  if (mUnitsBlob) {
+    auto unit_bounds = mUnitsBlob->getBoundSize();
+    unitWidth = unit_bounds.x;
 
-  //   nvgFontSize(ctx, fontSize());
-  //   nvgFillColor(ctx, mEnabled && (!mCommitted || !mValue.empty())
-  //                         ? mTheme->mTextColor
-  //                         : mTheme->mDisabledTextColor);
+    float offset = mSize.y() - unit_bounds.y;
 
-  //   // clip visible text area
-  //   float clipX = mPos.x() + xSpacing + spinArrowsWidth - 1.0f;
-  //   float clipY = mPos.y() + 1.0f;
-  //   float clipWidth =
-  //       mSize.x() - unitWidth - spinArrowsWidth - 2 * xSpacing + 2.0f;
-  //   float clipHeight = mSize.y() - 3.0f;
+    mStylePaint.setFillColor(Color{255, mEnabled ? 64 : 32}.toColor());
+    canvas->drawTextBlob(mUnitsBlob.get(), mSize.x() - xSpacing - unitWidth,
+                         drawPos.y() + offset, mStylePaint);
+  }
 
-  //   nvgSave(ctx);
-  //   nvgIntersectScissor(ctx, clipX, clipY, clipWidth, clipHeight);
+  float spinArrowsWidth = 0.f;
 
-  //   Vector2i oldDrawPos(drawPos);
-  //   drawPos.x() += mTextOffset;
+  if (mSpinnable && !focused()) {
+    spinArrowsWidth = 14.f;
 
-  //   if (mCommitted) {
-  //     nvgText(ctx, drawPos.x(), drawPos.y(),
-  //             mValue.empty() ? mPlaceholder.c_str() : mValue.c_str(),
-  //             nullptr);
-  //   } else {
-  //     const int maxGlyphs = 1024;
-  //     NVGglyphPosition glyphs[maxGlyphs];
-  //     float textBound[4];
-  //     nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
-  //     nullptr,
-  //                   textBound);
-  //     float lineh = textBound[3] - textBound[1];
+    mStylePaint.setTypeface(mTheme->mFontIcons);
+    mStylePaint.setTextSize(
+        ((mFontSize < 0) ? mTheme->mButtonFontSize : mFontSize) * icon_scale());
 
-  //     // find cursor positions
-  //     int nglyphs =
-  //         nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
-  //         mValueTemp.c_str(),
-  //                               nullptr, glyphs, maxGlyphs);
-  //     updateCursor(ctx, textBound[2], glyphs, nglyphs);
+    bool spinning = mMouseDownPos.x() != -1;
 
-  //     // compute text offset
-  //     int prevCPos = mCursorPos > 0 ? mCursorPos - 1 : 0;
-  //     int nextCPos = mCursorPos < nglyphs ? mCursorPos + 1 : nglyphs;
-  //     float prevCX =
-  //         cursorIndex2Position(prevCPos, textBound[2], glyphs, nglyphs);
-  //     float nextCX =
-  //         cursorIndex2Position(nextCPos, textBound[2], glyphs, nglyphs);
+    /* up button */ {
+      bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Top;
+      mStylePaint.setFillColor((mEnabled && (hover || spinning))
+                                   ? mTheme->mTextColor.toColor()
+                                   : mTheme->mDisabledTextColor.toColor());
 
-  //     if (nextCX > clipX + clipWidth)
-  //       mTextOffset -= nextCX - (clipX + clipWidth) + 1;
-  //     if (prevCX < clipX) mTextOffset += clipX - prevCX + 1;
+      if (mIconUpBlob == nullptr) {
+        mIconUpBlob = skity::TextBlobBuilder{}.buildTextBlob(
+            mTheme->mTextBoxUpIcon.c_str(), mStylePaint);
+      }
 
-  //     drawPos.x() = oldDrawPos.x() + mTextOffset;
+      Vector2f iconPos(4.f, mSize.y() / 2.f - xSpacing / 2.f);
+      canvas->drawTextBlob(mIconUpBlob.get(), iconPos.x(), iconPos.y(),
+                           mStylePaint);
+    }
 
-  //     // draw text with offset
-  //     nvgText(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(), nullptr);
-  //     nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
-  //     nullptr,
-  //                   textBound);
+    /* down button */ {
+      bool hover = mMouseFocus && spinArea(mMousePos) == SpinArea::Bottom;
 
-  //     // recompute cursor positions
-  //     nglyphs =
-  //         nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
-  //         mValueTemp.c_str(),
-  //                               nullptr, glyphs, maxGlyphs);
+      mStylePaint.setFillColor((mEnabled && (hover || spinning))
+                                   ? mTheme->mTextColor.toColor()
+                                   : mTheme->mDisabledTextColor.toColor());
 
-  //     if (mCursorPos > -1) {
-  //       if (mSelectionPos > -1) {
-  //         float caretx =
-  //             cursorIndex2Position(mCursorPos, textBound[2], glyphs,
-  //             nglyphs);
-  //         float selx =
-  //             cursorIndex2Position(mSelectionPos, textBound[2], glyphs,
-  //             nglyphs);
+      if (mIconDownBlob == nullptr) {
+        mIconDownBlob = skity::TextBlobBuilder{}.buildTextBlob(
+            mTheme->mTextBoxDownIcon.c_str(), mStylePaint);
+      }
+      Vector2f iconPos(4.f, mSize.y() / 2.f + xSpacing / 2.f + 1.5f);
+      canvas->drawTextBlob(mIconDownBlob.get(), iconPos.x(), iconPos.y(),
+                           mStylePaint);
+    }
 
-  //         if (caretx > selx) std::swap(caretx, selx);
+    mStylePaint.setTypeface(mTheme->mFontNormal);
+    mStylePaint.setTextSize(fontSize());
+  }
 
-  //         // draw selection
-  //         nvgBeginPath(ctx);
-  //         nvgFillColor(ctx, nvgRGBA(255, 255, 255, 80));
-  //         nvgRect(ctx, caretx, drawPos.y() - lineh * 0.5f, selx - caretx,
-  //         lineh); nvgFill(ctx);
-  //       }
+  mStylePaint.setFillColor(mEnabled && (!mCommitted || !mValue.empty())
+                               ? mTheme->mTextColor.toColor()
+                               : mTheme->mDisabledTextColor.toColor());
 
-  //       float caretx =
-  //           cursorIndex2Position(mCursorPos, textBound[2], glyphs, nglyphs);
+  // clip visible text area
+  float clipX = xSpacing + spinArrowsWidth - 1.0f;
+  float clipY = 1.0f;
+  float clipWidth =
+      mSize.x() - unitWidth - spinArrowsWidth - 2 * xSpacing + 2.0f;
+  float clipHeight = mSize.y() - 3.0f;
 
-  //       // draw cursor
-  //       nvgBeginPath(ctx);
-  //       nvgMoveTo(ctx, caretx, drawPos.y() - lineh * 0.5f);
-  //       nvgLineTo(ctx, caretx, drawPos.y() + lineh * 0.5f);
-  //       nvgStrokeColor(ctx, nvgRGBA(255, 192, 0, 255));
-  //       nvgStrokeWidth(ctx, 1.0f);
-  //       nvgStroke(ctx);
-  //     }
-  //   }
-  //   nvgRestore(ctx);
+  canvas->save();
+
+  canvas->clipRect(skity::Rect::MakeXYWH(clipX, clipY, clipWidth, clipHeight));
+
+  Vector2i oldDrawPos(drawPos);
+  drawPos.x() += mTextOffset;
+
+  if (mCommitted) {
+    if (mValueBlob != nullptr) {
+      auto value_bounds = mValueBlob->getBoundSize();
+
+      switch (mAlignment) {
+        case Alignment::Right:
+          drawPos.x() = mSize.x() - value_bounds.x;
+          break;
+        case Alignment::Center:
+          drawPos.x() = (mSize.x() - value_bounds.x - unitWidth) * 0.5f;
+          break;
+        default:
+          break;
+      }
+
+      float offset = (mSize.y() - value_bounds.y);
+      canvas->drawTextBlob(mValueBlob.get(), drawPos.x(), drawPos.y() + offset,
+                           mStylePaint);
+    }
+  } else {
+    //    const int maxGlyphs = 1024;
+    //    NVGglyphPosition glyphs[maxGlyphs];
+    //    float textBound[4];
+    //    nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
+    //    nullptr,
+    //                  textBound);
+    //    float lineh = textBound[3] - textBound[1];
+    //
+    //    // find cursor positions
+    //    int nglyphs =
+    //        nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
+    //        mValueTemp.c_str(),
+    //                              nullptr, glyphs, maxGlyphs);
+    //    updateCursor(ctx, textBound[2], glyphs, nglyphs);
+    //
+    //    // compute text offset
+    //    int prevCPos = mCursorPos > 0 ? mCursorPos - 1 : 0;
+    //    int nextCPos = mCursorPos < nglyphs ? mCursorPos + 1 : nglyphs;
+    //    float prevCX =
+    //        cursorIndex2Position(prevCPos, textBound[2], glyphs, nglyphs);
+    //    float nextCX =
+    //        cursorIndex2Position(nextCPos, textBound[2], glyphs, nglyphs);
+    //
+    //    if (nextCX > clipX + clipWidth)
+    //      mTextOffset -= nextCX - (clipX + clipWidth) + 1;
+    //    if (prevCX < clipX) mTextOffset += clipX - prevCX + 1;
+    //
+    //    drawPos.x() = oldDrawPos.x() + mTextOffset;
+    //
+    //    // draw text with offset
+    //    nvgText(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(), nullptr);
+    //    nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
+    //    nullptr,
+    //                  textBound);
+    //
+    //    // recompute cursor positions
+    //    nglyphs =
+    //        nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
+    //        mValueTemp.c_str(),
+    //                              nullptr, glyphs, maxGlyphs);
+
+    //    if (mCursorPos > -1) {
+    //      if (mSelectionPos > -1) {
+    //        float caretx =
+    //            cursorIndex2Position(mCursorPos, textBound[2], glyphs,
+    //            nglyphs);
+    //        float selx =
+    //            cursorIndex2Position(mSelectionPos, textBound[2], glyphs,
+    //            nglyphs);
+    //
+    //        if (caretx > selx) std::swap(caretx, selx);
+    //
+    //        // draw selection
+    //        nvgBeginPath(ctx);
+    //        nvgFillColor(ctx, nvgRGBA(255, 255, 255, 80));
+    //        nvgRect(ctx, caretx, drawPos.y() - lineh * 0.5f, selx - caretx,
+    //        lineh); nvgFill(ctx);
+    //      }
+    //
+    //      float caretx =
+    //          cursorIndex2Position(mCursorPos, textBound[2], glyphs, nglyphs);
+    //
+    //      // draw cursor
+    //      nvgBeginPath(ctx);
+    //      nvgMoveTo(ctx, caretx, drawPos.y() - lineh * 0.5f);
+    //      nvgLineTo(ctx, caretx, drawPos.y() + lineh * 0.5f);
+    //      nvgStrokeColor(ctx, nvgRGBA(255, 192, 0, 255));
+    //      nvgStrokeWidth(ctx, 1.0f);
+    //      nvgStroke(ctx);
+    //    }
+  }
+  canvas->restore();
 }
 
 bool TextBox::mouseButtonEvent(const Vector2i &p, int button, bool down,
@@ -664,7 +685,7 @@ void TextBox::save(Serializer &s) const {
   s.set("alignment", (int)mAlignment);
   s.set("units", mUnits);
   s.set("format", mFormat);
-//  s.set("unitsImage", mUnitsImage);
+  //  s.set("unitsImage", mUnitsImage);
   s.set("validFormat", mValidFormat);
   s.set("valueTemp", mValueTemp);
   s.set("cursorPos", mCursorPos);
@@ -681,7 +702,7 @@ bool TextBox::load(Serializer &s) {
   if (!s.get("alignment", mAlignment)) return false;
   if (!s.get("units", mUnits)) return false;
   if (!s.get("format", mFormat)) return false;
-//  if (!s.get("unitsImage", mUnitsImage)) return false;
+  //  if (!s.get("unitsImage", mUnitsImage)) return false;
   if (!s.get("validFormat", mValidFormat)) return false;
   if (!s.get("valueTemp", mValueTemp)) return false;
   if (!s.get("cursorPos", mCursorPos)) return false;

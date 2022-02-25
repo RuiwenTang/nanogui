@@ -144,6 +144,8 @@ class NANOGUI_EXPORT TextBox : public Widget {
   double mLastClick;
   mutable skity::Paint mStylePaint;
   mutable std::shared_ptr<skity::TextBlob> mUnitsBlob;
+  mutable std::shared_ptr<skity::TextBlob> mIconUpBlob;
+  mutable std::shared_ptr<skity::TextBlob> mIconDownBlob;
   mutable std::shared_ptr<skity::TextBlob> mValueBlob;
   mutable std::shared_ptr<skity::TextBlob> mDefaultValueBlob;
 
