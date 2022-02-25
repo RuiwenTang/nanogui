@@ -254,7 +254,7 @@ void TextBox::draw(skity::Canvas *canvas) {
 
       switch (mAlignment) {
         case Alignment::Right:
-          drawPos.x() = mSize.x() - value_bounds.x;
+          drawPos.x() = mSize.x() - value_bounds.x - unitWidth;
           break;
         case Alignment::Center:
           drawPos.x() = (mSize.x() - value_bounds.x - unitWidth) * 0.5f;
@@ -268,76 +268,67 @@ void TextBox::draw(skity::Canvas *canvas) {
                            mStylePaint);
     }
   } else {
-    //    const int maxGlyphs = 1024;
-    //    NVGglyphPosition glyphs[maxGlyphs];
-    //    float textBound[4];
-    //    nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
-    //    nullptr,
-    //                  textBound);
-    //    float lineh = textBound[3] - textBound[1];
-    //
-    //    // find cursor positions
-    //    int nglyphs =
-    //        nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
-    //        mValueTemp.c_str(),
-    //                              nullptr, glyphs, maxGlyphs);
-    //    updateCursor(ctx, textBound[2], glyphs, nglyphs);
-    //
-    //    // compute text offset
-    //    int prevCPos = mCursorPos > 0 ? mCursorPos - 1 : 0;
-    //    int nextCPos = mCursorPos < nglyphs ? mCursorPos + 1 : nglyphs;
-    //    float prevCX =
-    //        cursorIndex2Position(prevCPos, textBound[2], glyphs, nglyphs);
-    //    float nextCX =
-    //        cursorIndex2Position(nextCPos, textBound[2], glyphs, nglyphs);
-    //
-    //    if (nextCX > clipX + clipWidth)
-    //      mTextOffset -= nextCX - (clipX + clipWidth) + 1;
-    //    if (prevCX < clipX) mTextOffset += clipX - prevCX + 1;
-    //
-    //    drawPos.x() = oldDrawPos.x() + mTextOffset;
-    //
-    //    // draw text with offset
-    //    nvgText(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(), nullptr);
-    //    nvgTextBounds(ctx, drawPos.x(), drawPos.y(), mValueTemp.c_str(),
-    //    nullptr,
-    //                  textBound);
-    //
-    //    // recompute cursor positions
-    //    nglyphs =
-    //        nvgTextGlyphPositions(ctx, drawPos.x(), drawPos.y(),
-    //        mValueTemp.c_str(),
-    //                              nullptr, glyphs, maxGlyphs);
+    std::vector<skity::GlyphInfo> glyphs{};
 
-    //    if (mCursorPos > -1) {
-    //      if (mSelectionPos > -1) {
-    //        float caretx =
-    //            cursorIndex2Position(mCursorPos, textBound[2], glyphs,
-    //            nglyphs);
-    //        float selx =
-    //            cursorIndex2Position(mSelectionPos, textBound[2], glyphs,
-    //            nglyphs);
-    //
-    //        if (caretx > selx) std::swap(caretx, selx);
-    //
-    //        // draw selection
-    //        nvgBeginPath(ctx);
-    //        nvgFillColor(ctx, nvgRGBA(255, 255, 255, 80));
-    //        nvgRect(ctx, caretx, drawPos.y() - lineh * 0.5f, selx - caretx,
-    //        lineh); nvgFill(ctx);
-    //      }
-    //
-    //      float caretx =
-    //          cursorIndex2Position(mCursorPos, textBound[2], glyphs, nglyphs);
-    //
-    //      // draw cursor
-    //      nvgBeginPath(ctx);
-    //      nvgMoveTo(ctx, caretx, drawPos.y() - lineh * 0.5f);
-    //      nvgLineTo(ctx, caretx, drawPos.y() + lineh * 0.5f);
-    //      nvgStrokeColor(ctx, nvgRGBA(255, 192, 0, 255));
-    //      nvgStrokeWidth(ctx, 1.0f);
-    //      nvgStroke(ctx);
-    //    }
+    float lineh = 0.f;
+    if (mValueBlob) {
+      for (auto &run : mValueBlob->getTextRun()) {
+        glyphs.insert(glyphs.end(), run.getGlyphInfo().begin(),
+                      run.getGlyphInfo().end());
+      }
+
+      auto bounds = mValueBlob->getBoundSize();
+      lineh = bounds.y;
+    }
+    float lastX = 0.f;
+    for (auto &glyphInfo : glyphs) {
+      lastX += glyphInfo.advance_x;
+    }
+    updateCursor(lastX, glyphs);
+
+    // compute text offset
+    int prevCPos = mCursorPos > 0 ? mCursorPos - 1 : 0;
+    int nextCPos = mCursorPos < glyphs.size() ? mCursorPos + 1 : glyphs.size();
+    float prevCX = cursorIndex2Position(prevCPos, lastX, glyphs);
+    float nextCX = cursorIndex2Position(nextCPos, lastX, glyphs);
+
+    if (nextCX > clipX + clipWidth)
+      mTextOffset -= nextCX - (clipX + clipWidth) + 1;
+    if (prevCX < clipX) mTextOffset += clipX - prevCX + 1;
+
+    drawPos.x() = oldDrawPos.x() + mTextOffset;
+
+    if (mCursorPos > -1) {
+      if (mSelectionPos > -1) {
+        float caretx = cursorIndex2Position(mCursorPos, lastX, glyphs);
+        float selx = cursorIndex2Position(mSelectionPos, lastX, glyphs);
+
+        if (caretx > selx) std::swap(caretx, selx);
+
+        // draw selection
+        skity::Paint paint;
+        paint.setStyle(skity::Paint::kFill_Style);
+        paint.setColor(skity::ColorSetARGB(80, 255, 255, 255));
+
+        canvas->drawRect(
+            skity::Rect::MakeXYWH(caretx, drawPos.y() - lineh * 0.5f,
+                                  selx - caretx, lineh),
+            paint);
+      }
+
+      float caretx = cursorIndex2Position(mCursorPos, lineh, glyphs);
+
+      // draw cursor
+      skity::Path path;
+      path.moveTo(caretx, drawPos.y() - lineh * 0.5f);
+      path.lineTo(caretx, drawPos.y() + lineh * 0.5f);
+
+      paint.setStyle(skity::Paint::kStroke_Style);
+      paint.setColor(skity::ColorSetARGB(255, 255, 192, 0));
+      paint.setStrokeWidth(1.f);
+
+      canvas->drawPath(path, paint);
+    }
   }
   canvas->restore();
 }
@@ -610,7 +601,8 @@ bool TextBox::deleteSelection() {
   return false;
 }
 
-void TextBox::updateCursor(float lastx, const void *glyphs, int size) {
+void TextBox::updateCursor(float lastx,
+                           const std::vector<skity::GlyphInfo> &glyphs) {
   // handle mouse cursor events
   if (mMouseDownPos.x() != -1) {
     if (mMouseDownModifier == GLFW_MOD_SHIFT) {
@@ -618,47 +610,51 @@ void TextBox::updateCursor(float lastx, const void *glyphs, int size) {
     } else
       mSelectionPos = -1;
 
-    mCursorPos = position2CursorIndex(mMouseDownPos.x(), lastx, glyphs, size);
+    mCursorPos = position2CursorIndex(mMouseDownPos.x(), lastx, glyphs);
 
     mMouseDownPos = Vector2i(-1, -1);
   } else if (mMouseDragPos.x() != -1) {
     if (mSelectionPos == -1) mSelectionPos = mCursorPos;
 
-    mCursorPos = position2CursorIndex(mMouseDragPos.x(), lastx, glyphs, size);
+    mCursorPos = position2CursorIndex(mMouseDragPos.x(), lastx, glyphs);
   } else {
     // set cursor to last character
-    if (mCursorPos == -2) mCursorPos = size;
+    if (mCursorPos == -2) mCursorPos = glyphs.size() - 1;
   }
 
   if (mCursorPos == mSelectionPos) mSelectionPos = -1;
 }
 
-float TextBox::cursorIndex2Position(int index, float lastx, const void *glyphs,
-                                    int size) {
-  //   float pos = 0;
-  //   if (index == size)
-  //     pos = lastx;  // last character
-  //   else
-  //     pos = glyphs[index].x;
+float TextBox::cursorIndex2Position(
+    int index, float lastx, const std::vector<skity::GlyphInfo> &glyphs) {
+  float pos = 0;
+  if (index == glyphs.size() - 1)
+    pos = lastx;  // last character
+  else {
+    for (int i = 0; i <= index; i++) {
+      pos += glyphs[index].advance_x;
+    }
+  }
 
-  //   return pos;
-  return 0.f;
+  return pos;
 }
 
-int TextBox::position2CursorIndex(float posx, float lastx, const void *glyphs,
-                                  int size) {
-  //   int mCursorId = 0;
-  //   float caretx = glyphs[mCursorId].x;
-  //   for (int j = 1; j < size; j++) {
-  //     if (std::abs(caretx - posx) > std::abs(glyphs[j].x - posx)) {
-  //       mCursorId = j;
-  //       caretx = glyphs[mCursorId].x;
-  //     }
-  //   }
-  //   if (std::abs(caretx - posx) > std::abs(lastx - posx)) mCursorId = size;
+int TextBox::position2CursorIndex(float posx, float lastx,
+                                  const std::vector<skity::GlyphInfo> &glyphs) {
+  int mCursorId = 0;
 
-  //   return mCursorId;
-  return 0;
+  float caretx = glyphs[mCursorId].advance_x;
+  for (int j = 1; j < glyphs.size(); j++) {
+    if (std::abs(caretx - posx) >
+        std::abs(caretx + glyphs[j].advance_x - posx)) {
+      mCursorId = j;
+      caretx += glyphs[mCursorId].advance_x;
+    }
+  }
+  if (std::abs(caretx - posx) > std::abs(lastx - posx))
+    mCursorId = glyphs.size() - 1;
+
+  return mCursorId;
 }
 
 TextBox::SpinArea TextBox::spinArea(const Vector2i &pos) {

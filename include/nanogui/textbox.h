@@ -110,11 +110,11 @@ class NANOGUI_EXPORT TextBox : public Widget {
   void pasteFromClipboard();
   bool deleteSelection();
 
-  void updateCursor(float lastx, const void *glyphs, int size);
-  float cursorIndex2Position(int index, float lastx, const void *glyphs,
-                             int size);
-  int position2CursorIndex(float posx, float lastx, const void *glyphs,
-                           int size);
+  void updateCursor(float lastx, const std::vector<skity::GlyphInfo> &glyphs);
+  float cursorIndex2Position(int index, float lastx,
+                             const std::vector<skity::GlyphInfo> &glyphs);
+  int position2CursorIndex(float posx, float lastx,
+                           const std::vector<skity::GlyphInfo> &glyphs);
 
   /// The location (if any) for the spin area.
   enum class SpinArea { None, Top, Bottom };
@@ -147,6 +147,7 @@ class NANOGUI_EXPORT TextBox : public Widget {
   mutable std::shared_ptr<skity::TextBlob> mIconUpBlob;
   mutable std::shared_ptr<skity::TextBlob> mIconDownBlob;
   mutable std::shared_ptr<skity::TextBlob> mValueBlob;
+  mutable std::shared_ptr<skity::TextBlob> mValueTempBlob;
   mutable std::shared_ptr<skity::TextBlob> mDefaultValueBlob;
 
  public:

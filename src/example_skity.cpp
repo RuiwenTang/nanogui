@@ -77,7 +77,7 @@ int main(int argc, const char** argv) {
   new CheckBox(popupLeft, "Another check box");
 
   window = new Window(screen, "Basic widgets");
-  window->setPosition(Vector2i(300, 15));
+  window->setPosition(Vector2i(250, 10));
   window->setLayout(new GroupLayout());
 
   new Label(window, "Message dialog", "sans-bold");
@@ -210,21 +210,32 @@ int main(int argc, const char** argv) {
 
   new Label(window, "Slider and text box", "sans-bold");
 
-  Widget *panel = new Widget(window);
-  panel->setLayout(new BoxLayout(Orientation::Horizontal,
-                                 Alignment::Middle, 0, 20));
+  Widget* panel = new Widget(window);
+  panel->setLayout(
+      new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 20));
 
-  Slider *slider = new Slider(panel);
+  Slider* slider = new Slider(panel);
   slider->setValue(0.5f);
   slider->setFixedWidth(80);
 
-  TextBox *textBox = new TextBox(panel);
+  TextBox* textBox = new TextBox(panel);
   textBox->setFixedSize(Vector2i(60, 25));
   textBox->setValue("50");
   textBox->setUnits("%");
   slider->setCallback([textBox](float value) {
-    textBox->setValue(std::to_string((int) (value * 100)));
+    textBox->setValue(std::to_string((int)(value * 100)));
   });
+  slider->setFinalCallback([&](float value) {
+    std::cout << "Final slider value: " << (int)(value * 100) << std::endl;
+  });
+
+  textBox->setFixedSize(Vector2i(60, 25));
+  textBox->setFontSize(20);
+  textBox->setAlignment(TextBox::Alignment::Right);
+
+  window = new Window(screen, "Misc. widgets");
+  window->setPosition(Vector2i(510, 15));
+  window->setLayout(new GroupLayout());
 
   screen->setVisible(true);
   screen->performLayout();
