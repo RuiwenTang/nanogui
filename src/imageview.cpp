@@ -254,8 +254,7 @@ void ImageView::draw(skity::Canvas* canvas) {
 
   canvas->save();
 
-  skity::Rect rect =
-      skity::Rect::MakeXYWH(0, 0, mSize.x(), mSize.y());
+  skity::Rect rect = skity::Rect::MakeXYWH(0, 0, mSize.x(), mSize.y());
 
   canvas->clipRect(rect);
 
@@ -276,7 +275,8 @@ void ImageView::draw(skity::Canvas* canvas) {
   paint.setShader(skity::Shader::MakeShader(mImage));
 
   canvas->drawRect(
-      skity::Rect::MakeXYWH(mOffset.x(), mOffset.y(), size().x() * mScale, size().y() * mScale),
+      skity::Rect::MakeXYWH(mOffset.x(), mOffset.y(), size().x() * mScale,
+                            size().y() * mScale),
       paint);
 
   if (helpersVisible()) drawHelpers(canvas);
@@ -418,10 +418,9 @@ void ImageView::writePixelInfo(skity::Canvas* canvas,
   paint.setTypeface(mTheme->mFontNormal);
   paint.setTextSize(fontSize);
 
-  float yOffset = (stride - fontSize * pixelDataRows.size()) / 2;
+  float yOffset = (stride - fontSize * pixelDataRows.size());
   for (size_t i = 0; i != pixelDataRows.size(); ++i) {
-    canvas->drawSimpleText2(pixelDataRows[i].data(),
-                            cellPosition.x() + stride / 2,
+    canvas->drawSimpleText2(pixelDataRows[i].data(), cellPosition.x(),
                             cellPosition.y() + yOffset, paint);
     yOffset += fontSize;
   }

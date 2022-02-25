@@ -116,7 +116,7 @@ int main(int argc, const char** argv) {
   PopupButton* imagePanelBtn = new PopupButton(window, "Image Panel");
   imagePanelBtn->setIconStr(ENTYPO_ICON_FOLDER);
   popup = imagePanelBtn->popup();
-  VScrollPanel *vscroll = new VScrollPanel(popup);
+  VScrollPanel* vscroll = new VScrollPanel(popup);
 
   std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>> icons =
       loadImageDirectory("icons");
@@ -125,7 +125,7 @@ int main(int argc, const char** argv) {
 #else
   std::string resourcesFolderPath("./");
 #endif
-  ImagePanel *imgPanel = new ImagePanel(vscroll);
+  ImagePanel* imgPanel = new ImagePanel(vscroll);
   imgPanel->setImages(icons);
   popup->setFixedSize(Vector2i(245, 150));
 
@@ -143,8 +143,54 @@ int main(int argc, const char** argv) {
     std::cout << "Selected item " << i << '\n';
   });
 
+  imageView->setPixelInfoCallback(
+      [screen, mCurrentImage, icons,
+       imageView](const Vector2i& index) -> std::pair<std::string, Color> {
+        auto& pixmap = icons[mCurrentImage].first;
+        auto& textureSize = imageView->imageSize();
+        const char* imageData = (const char*)pixmap->Addr();
+        std::string stringData;
+        uint16_t channelSum = 0;
+        for (int i = 0; i != 4; ++i) {
+          uint8_t channelData =
+              imageData[4 * index.y() * textureSize.x() + 4 * index.x() + i];
+          channelSum += channelData;
+          stringData += (std::to_string(static_cast<int>(channelData)) + "\n");
+        }
+        float intensity = static_cast<float>(255 - (channelSum / 4)) / 255.0f;
+        float colorScale =
+            intensity > 0.5f ? (intensity + 1) / 2 : intensity / 2;
+        Color textColor = Color(colorScale, 1.0f);
+        return {stringData, textColor};
+      });
+
   imageView->setGridThreshold(20);
   imageView->setPixelInfoThreshold(20);
+
+  new Label(window, "File dialog", "sans-bold");
+  tools = new Widget(window);
+  tools->setLayout(
+      new BoxLayout(Orientation::Horizontal, Alignment::Middle, 0, 6));
+
+  b = new Button(tools, "Open", "");
+  b->setCallback([&] {
+    std::cout << "File dialog result: "
+              << file_dialog({{"png", "Portable Network Graphics"},
+                              {"txt", "Text file"}},
+                             false)
+              << std::endl;
+  });
+
+  b = new Button(tools, "Save", "");
+  b->setCallback([&] {
+    std::cout << "File dialog result: "
+              << file_dialog({{"png", "Portable Network Graphics"},
+                              {"txt", "Text file"}},
+                             true)
+              << std::endl;
+  });
+
+  new Label(window, "Combo box", "sans-bold");
 
   screen->setVisible(true);
   screen->performLayout();

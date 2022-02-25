@@ -18,6 +18,7 @@
 #include <nanogui/widget.h>
 
 #include <functional>
+#include <utility>
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -43,7 +44,10 @@ class NANOGUI_EXPORT ImageView : public Widget {
     return (mScale * mImageSize.cast<float>());
   }
 
-  void bindImage(std::shared_ptr<skity::Pixmap> image) { mImage = image; }
+  void bindImage(std::shared_ptr<skity::Pixmap> image) {
+    mImage = std::move(image);
+    updateImageParameters();
+  }
 
   const Vector2f& offset() const { return mOffset; }
   void setOffset(const Vector2f& offset) { mOffset = offset; }
