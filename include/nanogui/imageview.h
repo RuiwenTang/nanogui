@@ -14,9 +14,10 @@
 
 #pragma once
 
-#include <nanogui/glutil.h>
+#include <nanogui/opengl.h>
 #include <nanogui/widget.h>
 
+#include <Eigen/Geometry>
 #include <functional>
 #include <utility>
 

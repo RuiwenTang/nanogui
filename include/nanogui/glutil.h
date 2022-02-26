@@ -11,7 +11,7 @@
 /** \file */
 
 #pragma once
-
+#error "err"
 #include <nanogui/opengl.h>
 #include <Eigen/Geometry>
 #include <map>

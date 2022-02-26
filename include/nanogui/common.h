@@ -565,28 +565,10 @@ extern NANOGUI_EXPORT void chdir_to_bundle_parent();
 
 #endif
 
-/**
- * \brief Convert a single UTF32 character code to UTF8.
- *
- * \rst
- * NanoGUI uses this to convert the icon character codes
- * defined in :ref:`file_nanogui_entypo.h`.
- * \endrst
- *
- * \param c
- *     The UTF32 character to be converted.
- */
-extern NANOGUI_EXPORT std::array<char, 8> utf8(int c);
-
 /// Load a directory of PNG images and upload them to the GPU (suitable for use
 /// with ImagePanel)
 extern NANOGUI_EXPORT
     std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>>
     loadImageDirectory(const std::string &path);
-
-/// Convenience function for instanting a PNG icon from the application's data
-/// segment (via bin2c)
-#define nvgImageIcon(ctx, name) \
-  nanogui::__nanogui_get_image(ctx, #name, name##_png, name##_png_size)
 
 NAMESPACE_END(nanogui)

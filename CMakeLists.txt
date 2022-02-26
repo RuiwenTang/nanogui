@@ -20,13 +20,15 @@ endif()
 
 if (WIN32)
   set(NANOGUI_USE_GLAD_DEFAULT ON)
+  add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+  add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 else()
   set(NANOGUI_USE_GLAD_DEFAULT OFF)
 endif()
 
 option(NANOGUI_BUILD_EXAMPLE "Build NanoGUI example application?" ON)
 option(NANOGUI_BUILD_SHARED  "Build NanoGUI as a shared library?" ON)
-option(NANOGUI_BUILD_PYTHON  "Build a Python plugin for NanoGUI?" ON)
+option(NANOGUI_BUILD_PYTHON  "Build a Python plugin for NanoGUI?" OFF)
 option(NANOGUI_USE_GLAD      "Use Glad OpenGL loader library?" ON)
 option(NANOGUI_INSTALL       "Install NanoGUI on `make install`?" ON)
 
@@ -323,8 +325,6 @@ add_definitions(${NANOGUI_EXTRA_DEFS})
 
 # Compile main NanoGUI library
 add_library(nanogui-obj OBJECT
-  # Merge NanoVG into the NanoGUI library
-  ext/nanovg/src/nanovg.c
   # Merge GLAD into the NanoGUI library (only if needed)
   ${LIBNANOGUI_EXTRA_SOURCE}
   # Fonts etc.
@@ -428,17 +428,17 @@ endif()
 
 # Build example application if desired
 if(NANOGUI_BUILD_EXAMPLE)
-  add_executable(example1      src/example1.cpp)
-  add_executable(example2      src/example2.cpp)
-  add_executable(example3      src/example3.cpp)
-  add_executable(example4      src/example4.cpp)
-  add_executable(example_icons src/example_icons.cpp)
+  # add_executable(example1      src/example1.cpp)
+  # add_executable(example2      src/example2.cpp)
+  # add_executable(example3      src/example3.cpp)
+  # add_executable(example4      src/example4.cpp)
+  # add_executable(example_icons src/example_icons.cpp)
   add_executable(example_skity src/example_skity.cpp)
-  target_link_libraries(example1      nanogui ${NANOGUI_EXTRA_LIBS})
-  target_link_libraries(example2      nanogui ${NANOGUI_EXTRA_LIBS})
-  target_link_libraries(example3      nanogui ${NANOGUI_EXTRA_LIBS})
-  target_link_libraries(example4      nanogui ${NANOGUI_EXTRA_LIBS})
-  target_link_libraries(example_icons nanogui ${NANOGUI_EXTRA_LIBS})
+  # target_link_libraries(example1      nanogui ${NANOGUI_EXTRA_LIBS})
+  # target_link_libraries(example2      nanogui ${NANOGUI_EXTRA_LIBS})
+  # target_link_libraries(example3      nanogui ${NANOGUI_EXTRA_LIBS})
+  # target_link_libraries(example4      nanogui ${NANOGUI_EXTRA_LIBS})
+  # target_link_libraries(example_icons nanogui ${NANOGUI_EXTRA_LIBS})
   target_link_libraries(example_skity nanogui ${NANOGUI_EXTRA_LIBS})
 
   # Copy icons for example application

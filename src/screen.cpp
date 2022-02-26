@@ -37,10 +37,6 @@
 #include <GLFW/glfw3native.h>
 #endif
 
-/* Allow enforcing the GL2 implementation of NanoVG */
-#define NANOVG_GL3_IMPLEMENTATION
-#include <nanovg_gl.h>
-
 NAMESPACE_BEGIN(nanogui)
 
 std::map<GLFWwindow *, Screen *> __nanogui_screens;
@@ -317,13 +313,6 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
                                         GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE,
                                         &nStencilBits);
   glGetIntegerv(GL_SAMPLES, &nSamples);
-
-  int flags = 0;
-  if (nStencilBits >= 8) flags |= NVG_STENCIL_STROKES;
-  if (nSamples <= 1) flags |= NVG_ANTIALIAS;
-#if !defined(NDEBUG)
-  flags |= NVG_DEBUG;
-#endif
 
   int32_t pp_width, pp_height;
   glfwGetFramebufferSize(window, &pp_width, &pp_height);

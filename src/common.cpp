@@ -163,17 +163,6 @@ std::array<char, 8> utf8(int c) {
   return seq;
 }
 
-int __nanogui_get_image(NVGcontext *ctx, const std::string &name, uint8_t *data,
-                        uint32_t size) {
-  static std::map<std::string, int> iconCache;
-  auto it = iconCache.find(name);
-  if (it != iconCache.end()) return it->second;
-  int iconID = nvgCreateImageMem(ctx, 0, data, size);
-  if (iconID == 0) throw std::runtime_error("Unable to load resource data.");
-  iconCache[name] = iconID;
-  return iconID;
-}
-
 std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>>
 loadImageDirectory(const std::string &path) {
   std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>> result;
