@@ -16,7 +16,7 @@ int main(int argc, const char** argv) {
       new Screen(Vector2i(1200, 800), "NanoGUI Skity [GL 4.1]",
                  /*resizable*/ false, /*fullscreen*/ false, /*colorBits*/ 8,
                  /*alphaBits*/ 8, /*depthBits*/ 24, /*stencilBits*/ 8,
-                 /*nSamples*/ 0, /*glMajor*/ 4, /*glMinor*/ 1);
+                 /*nSamples*/ 8, /*glMajor*/ 4, /*glMinor*/ 1);
 
   bool enabled = true;
   FormHelper* gui = new FormHelper(screen);
@@ -121,7 +121,7 @@ int main(int argc, const char** argv) {
   std::vector<std::pair<std::shared_ptr<skity::Pixmap>, std::string>> icons =
       loadImageDirectory("icons");
 #if defined(_WIN32)
-  string resourcesFolderPath("../resources/");
+  std::string resourcesFolderPath("../resources/");
 #else
   std::string resourcesFolderPath("./");
 #endif

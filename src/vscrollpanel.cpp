@@ -127,7 +127,7 @@ void VScrollPanel::draw(skity::Canvas *canvas) {
   pts[0].x = mSize.x() - 12 - 1;
   pts[0].y = 4 + (mSize.y() - 8 - scrollh) * mScroll - 1;
   pts[1].x = 8;
-  pts[2].y = scrollh;
+  pts[1].y = scrollh;
 
   colors[0] = Color{220, 100}.toColor();
   colors[1] = Color{128, 100}.toColor();

@@ -28,6 +28,9 @@
 #include <signal.h>
 #endif
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 NAMESPACE_BEGIN(nanogui)
 
 extern std::map<GLFWwindow *, Screen *> __nanogui_screens;
@@ -187,13 +190,14 @@ loadImageDirectory(const std::string &path) {
 
     if (img_data == nullptr)
       throw std::runtime_error("Could not open image data!");
+    int w, h, n;
+    auto decoded_data = stbi_load_from_memory(
+        (stbi_uc const *)img_data->RawData(), img_data->Size(), &w, &h, &n, 4);
 
-    auto img_codec = skity::Codec::MakeFromData(img_data);
-    if (img_codec == nullptr) {
-      throw std::runtime_error("Could not decode image data!");
-    }
-    img_codec->SetData(img_data);
-    auto img = img_codec->Decode();
+    auto img = std::make_shared<skity::Pixmap>(
+        skity::Data::MakeWithCopy(decoded_data, w * h * 4), w * 4, w, h);
+
+    stbi_image_free(decoded_data);
     result.emplace_back(img, fullName.substr(0, fullName.length() - 4));
 #if !defined(_WIN32)
   }

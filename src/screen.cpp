@@ -314,16 +314,11 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
                                         &nStencilBits);
   glGetIntegerv(GL_SAMPLES, &nSamples);
 
-  int32_t pp_width, pp_height;
-  glfwGetFramebufferSize(window, &pp_width, &pp_height);
-
-  float density = (float)(pp_width * pp_width + pp_height * pp_height) /
-                  (float)(width() * width() + height() * height());
 #ifdef NANOGUI_GLAD
   skity::GPUContext ctx{skity::GPUBackendType::kOpenGL,
                         (void *)glfwGetProcAddress};
-  mCanvas = skity::Canvas::MakeHardwareAccelationCanvas(width(), height(),
-                                                        density, &ctx);
+  mCanvas = skity::Canvas::MakeHardwareAccelationCanvas(
+      width(), height(), mPixelRatio, &ctx);
 #else
 #error "Need GLAD"
 #endif
@@ -339,8 +334,6 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
 
   for (int i = 0; i < (int)Cursor::CursorCount; ++i)
     mCursors[i] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR + i);
-
-
 }
 
 Screen::~Screen() {
@@ -420,42 +413,45 @@ void Screen::drawWidgets() {
     if (widget && !widget->tooltip().empty()) {
       int tooltipWidth = 150;
       // TODO implement tooltips draw
-//      float bounds[4];
-//      nvgFontFace(mNVGContext, "sans");
-//      nvgFontSize(mNVGContext, 15.0f);
-//      nvgTextAlign(mNVGContext, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-//      nvgTextLineHeight(mNVGContext, 1.1f);
-//      Vector2i pos = widget->absolutePosition() +
-//                     Vector2i(widget->width() / 2, widget->height() + 10);
-//
-//      nvgTextBounds(mNVGContext, pos.x(), pos.y(), widget->tooltip().c_str(),
-//                    nullptr, bounds);
-//      int h = (bounds[2] - bounds[0]) / 2;
-//      if (h > tooltipWidth / 2) {
-//        nvgTextAlign(mNVGContext, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-//        nvgTextBoxBounds(mNVGContext, pos.x(), pos.y(), tooltipWidth,
-//                         widget->tooltip().c_str(), nullptr, bounds);
-//
-//        h = (bounds[2] - bounds[0]) / 2;
-//      }
-//      nvgGlobalAlpha(mNVGContext, std::min(1.0, 2 * (elapsed - 0.5f)) * 0.8);
-//
-//      nvgBeginPath(mNVGContext);
-//      nvgFillColor(mNVGContext, Color(0, 255));
-//      nvgRoundedRect(mNVGContext, bounds[0] - 4 - h, bounds[1] - 4,
-//                     (int)(bounds[2] - bounds[0]) + 8,
-//                     (int)(bounds[3] - bounds[1]) + 8, 3);
-//
-//      int px = (int)((bounds[2] + bounds[0]) / 2) - h;
-//      nvgMoveTo(mNVGContext, px, bounds[1] - 10);
-//      nvgLineTo(mNVGContext, px + 7, bounds[1] + 1);
-//      nvgLineTo(mNVGContext, px - 7, bounds[1] + 1);
-//      nvgFill(mNVGContext);
-//
-//      nvgFillColor(mNVGContext, Color(255, 255));
-//      nvgFontBlur(mNVGContext, 0.0f);
-//      nvgTextBox(mNVGContext, pos.x() - h, pos.y(), tooltipWidth,
-//                 widget->tooltip().c_str(), nullptr);
+      //      float bounds[4];
+      //      nvgFontFace(mNVGContext, "sans");
+      //      nvgFontSize(mNVGContext, 15.0f);
+      //      nvgTextAlign(mNVGContext, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+      //      nvgTextLineHeight(mNVGContext, 1.1f);
+      //      Vector2i pos = widget->absolutePosition() +
+      //                     Vector2i(widget->width() / 2, widget->height() +
+      //                     10);
+      //
+      //      nvgTextBounds(mNVGContext, pos.x(), pos.y(),
+      //      widget->tooltip().c_str(),
+      //                    nullptr, bounds);
+      //      int h = (bounds[2] - bounds[0]) / 2;
+      //      if (h > tooltipWidth / 2) {
+      //        nvgTextAlign(mNVGContext, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+      //        nvgTextBoxBounds(mNVGContext, pos.x(), pos.y(), tooltipWidth,
+      //                         widget->tooltip().c_str(), nullptr, bounds);
+      //
+      //        h = (bounds[2] - bounds[0]) / 2;
+      //      }
+      //      nvgGlobalAlpha(mNVGContext, std::min(1.0, 2 * (elapsed - 0.5f)) *
+      //      0.8);
+      //
+      //      nvgBeginPath(mNVGContext);
+      //      nvgFillColor(mNVGContext, Color(0, 255));
+      //      nvgRoundedRect(mNVGContext, bounds[0] - 4 - h, bounds[1] - 4,
+      //                     (int)(bounds[2] - bounds[0]) + 8,
+      //                     (int)(bounds[3] - bounds[1]) + 8, 3);
+      //
+      //      int px = (int)((bounds[2] + bounds[0]) / 2) - h;
+      //      nvgMoveTo(mNVGContext, px, bounds[1] - 10);
+      //      nvgLineTo(mNVGContext, px + 7, bounds[1] + 1);
+      //      nvgLineTo(mNVGContext, px - 7, bounds[1] + 1);
+      //      nvgFill(mNVGContext);
+      //
+      //      nvgFillColor(mNVGContext, Color(255, 255));
+      //      nvgFontBlur(mNVGContext, 0.0f);
+      //      nvgTextBox(mNVGContext, pos.x() - h, pos.y(), tooltipWidth,
+      //                 widget->tooltip().c_str(), nullptr);
     }
   }
 
