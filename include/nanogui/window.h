@@ -47,7 +47,7 @@ class NANOGUI_EXPORT Window : public Widget {
   void center();
 
   /// Draw the window
-  virtual void draw(skity::Canvas *canvas) override;
+  void draw(skity::Canvas *canvas) override;
   /// Handle window drag events
   virtual bool mouseDragEvent(const Vector2i &p, const Vector2i &rel,
                               int button, int modifiers) override;

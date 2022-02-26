@@ -22,7 +22,7 @@ int main(int argc, const char** argv) {
   FormHelper* gui = new FormHelper(screen);
 
   ref<Window> window =
-      gui->addWindow(Eigen::Vector2i(10, 10), "Form helper example");
+      gui->addWindow(Eigen::Vector2i(10, 50), "Form helper example");
   window->setLayout(new GroupLayout());
 
   new Label(window, "Toggle buttons", "sans-bold");
@@ -77,7 +77,7 @@ int main(int argc, const char** argv) {
   new CheckBox(popupLeft, "Another check box");
 
   window = new Window(screen, "Basic widgets");
-  window->setPosition(Vector2i(250, 10));
+  window->setPosition(Vector2i(250, 50));
   window->setLayout(new GroupLayout());
 
   new Label(window, "Message dialog", "sans-bold");
@@ -234,7 +234,7 @@ int main(int argc, const char** argv) {
   textBox->setAlignment(TextBox::Alignment::Right);
 
   window = new Window(screen, "Misc. widgets");
-  window->setPosition(Vector2i(510, 15));
+  window->setPosition(Vector2i(510, 55));
   window->setLayout(new GroupLayout());
 
   screen->setVisible(true);

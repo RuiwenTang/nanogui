@@ -16,6 +16,8 @@
 
 #include <nanogui/widget.h>
 
+#include <perf.hpp>
+
 NAMESPACE_BEGIN(nanogui)
 
 /**
@@ -209,6 +211,14 @@ class NANOGUI_EXPORT Screen : public Widget {
   bool mShutdownGLFWOnDestruct;
   bool mFullscreen;
   std::function<void(Vector2i)> mResizeCallback;
+
+ private:
+  double time_ = 0;
+  double prev_time_ = 0;
+  double cpu_time_ = 0;
+  double dt_ = 0;
+  Perf fpsGraph;
+  Perf cpuGraph;
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

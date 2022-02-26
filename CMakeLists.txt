@@ -93,6 +93,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity/third_party/glm)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/ext/Skity/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/Skity/example)
 
 
 # Two targets have now been defined: `glfw_objects`, which will be merged into
@@ -355,6 +356,7 @@ add_library(nanogui-obj OBJECT
   include/nanogui/serializer/opengl.h
   include/nanogui/serializer/sparse.h
   src/serializer.cpp
+  ext/Skity/example/perf.cc ext/Skity/example/perf.hpp
 )
 
 # XCode has a serious bug where the XCode project produces an invalid target

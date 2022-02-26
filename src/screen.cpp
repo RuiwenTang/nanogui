@@ -123,7 +123,9 @@ Screen::Screen()
       mCursor(Cursor::Arrow),
       mBackground(0.3f, 0.3f, 0.32f, 1.f),
       mShutdownGLFWOnDestruct(false),
-      mFullscreen(false) {
+      mFullscreen(false),
+      fpsGraph(Perf::GRAPH_RENDER_FPS, "Frame Time"),
+      cpuGraph(Perf::GRAPH_RENDER_MS, "CPU Time") {
   memset(mCursors, 0, sizeof(GLFWcursor *) * (int)Cursor::CursorCount);
 }
 
@@ -138,7 +140,9 @@ Screen::Screen(const Vector2i &size, const std::string &caption, bool resizable,
       mBackground(0.3f, 0.3f, 0.32f, 1.f),
       mCaption(caption),
       mShutdownGLFWOnDestruct(false),
-      mFullscreen(fullscreen) {
+      mFullscreen(fullscreen),
+      fpsGraph(Perf::GRAPH_RENDER_FPS, "Frame Time"),
+      cpuGraph(Perf::GRAPH_RENDER_MS, "CPU Time") {
   memset(mCursors, 0, sizeof(GLFWcursor *) * (int)Cursor::CursorCount);
 
   /* Request a forward compatible OpenGL glMajor.glMinor core profile context.
@@ -317,8 +321,8 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
 #ifdef NANOGUI_GLAD
   skity::GPUContext ctx{skity::GPUBackendType::kOpenGL,
                         (void *)glfwGetProcAddress};
-  mCanvas = skity::Canvas::MakeHardwareAccelationCanvas(
-      width(), height(), mPixelRatio, &ctx);
+  mCanvas = skity::Canvas::MakeHardwareAccelationCanvas(width(), height(),
+                                                        mPixelRatio, &ctx);
 #else
 #error "Need GLAD"
 #endif
@@ -334,6 +338,18 @@ void Screen::initialize(GLFWwindow *window, bool shutdownGLFWOnDestruct) {
 
   for (int i = 0; i < (int)Cursor::CursorCount; ++i)
     mCursors[i] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR + i);
+
+  mCanvas->setDefaultTypeface(mTheme->mFontNormal);
+
+  time_ = prev_time_ = glfwGetTime();
+
+  glfwMakeContextCurrent(mGLFWWindow);
+
+  glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
+  glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
+
+  glViewport(0, 0, mFBSize[0], mFBSize[1]);
+  glBindSampler(0, 0);
 }
 
 Screen::~Screen() {
@@ -387,11 +403,6 @@ void Screen::drawAll() {
 void Screen::drawWidgets() {
   if (!mVisible) return;
 
-  glfwMakeContextCurrent(mGLFWWindow);
-
-  glfwGetFramebufferSize(mGLFWWindow, &mFBSize[0], &mFBSize[1]);
-  glfwGetWindowSize(mGLFWWindow, &mSize[0], &mSize[1]);
-
 #if defined(_WIN32) || defined(__linux__)
   mSize = (mSize.cast<float>() / mPixelRatio).cast<int>();
   mFBSize = (mSize.cast<float>() * mPixelRatio).cast<int>();
@@ -400,62 +411,71 @@ void Screen::drawWidgets() {
   if (mSize[0]) mPixelRatio = (float)mFBSize[0] / (float)mSize[0];
 #endif
 
-  glViewport(0, 0, mFBSize[0], mFBSize[1]);
-  glBindSampler(0, 0);
+  time_ = glfwGetTime();
+
+  double dt = time_ - prev_time_;
+  prev_time_ = time_;
 
   draw(mCanvas.get());
+  cpu_time_ = glfwGetTime() - time_;
 
-  double elapsed = glfwGetTime() - mLastInteraction;
+  //double elapsed = glfwGetTime() - mLastInteraction;
 
-  if (elapsed > 0.5f) {
-    /* Draw tooltips */
-    const Widget *widget = findWidget(mMousePos);
-    if (widget && !widget->tooltip().empty()) {
-      int tooltipWidth = 150;
-      // TODO implement tooltips draw
-      //      float bounds[4];
-      //      nvgFontFace(mNVGContext, "sans");
-      //      nvgFontSize(mNVGContext, 15.0f);
-      //      nvgTextAlign(mNVGContext, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
-      //      nvgTextLineHeight(mNVGContext, 1.1f);
-      //      Vector2i pos = widget->absolutePosition() +
-      //                     Vector2i(widget->width() / 2, widget->height() +
-      //                     10);
-      //
-      //      nvgTextBounds(mNVGContext, pos.x(), pos.y(),
-      //      widget->tooltip().c_str(),
-      //                    nullptr, bounds);
-      //      int h = (bounds[2] - bounds[0]) / 2;
-      //      if (h > tooltipWidth / 2) {
-      //        nvgTextAlign(mNVGContext, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
-      //        nvgTextBoxBounds(mNVGContext, pos.x(), pos.y(), tooltipWidth,
-      //                         widget->tooltip().c_str(), nullptr, bounds);
-      //
-      //        h = (bounds[2] - bounds[0]) / 2;
-      //      }
-      //      nvgGlobalAlpha(mNVGContext, std::min(1.0, 2 * (elapsed - 0.5f)) *
-      //      0.8);
-      //
-      //      nvgBeginPath(mNVGContext);
-      //      nvgFillColor(mNVGContext, Color(0, 255));
-      //      nvgRoundedRect(mNVGContext, bounds[0] - 4 - h, bounds[1] - 4,
-      //                     (int)(bounds[2] - bounds[0]) + 8,
-      //                     (int)(bounds[3] - bounds[1]) + 8, 3);
-      //
-      //      int px = (int)((bounds[2] + bounds[0]) / 2) - h;
-      //      nvgMoveTo(mNVGContext, px, bounds[1] - 10);
-      //      nvgLineTo(mNVGContext, px + 7, bounds[1] + 1);
-      //      nvgLineTo(mNVGContext, px - 7, bounds[1] + 1);
-      //      nvgFill(mNVGContext);
-      //
-      //      nvgFillColor(mNVGContext, Color(255, 255));
-      //      nvgFontBlur(mNVGContext, 0.0f);
-      //      nvgTextBox(mNVGContext, pos.x() - h, pos.y(), tooltipWidth,
-      //                 widget->tooltip().c_str(), nullptr);
-    }
-  }
+  //if (elapsed > 0.5f) {
+  //  /* Draw tooltips */
+  //  const Widget *widget = findWidget(mMousePos);
+  //  if (widget && !widget->tooltip().empty()) {
+  //    int tooltipWidth = 150;
+  //    // TODO implement tooltips draw
+  //    //      float bounds[4];
+  //    //      nvgFontFace(mNVGContext, "sans");
+  //    //      nvgFontSize(mNVGContext, 15.0f);
+  //    //      nvgTextAlign(mNVGContext, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+  //    //      nvgTextLineHeight(mNVGContext, 1.1f);
+  //    //      Vector2i pos = widget->absolutePosition() +
+  //    //                     Vector2i(widget->width() / 2, widget->height() +
+  //    //                     10);
+  //    //
+  //    //      nvgTextBounds(mNVGContext, pos.x(), pos.y(),
+  //    //      widget->tooltip().c_str(),
+  //    //                    nullptr, bounds);
+  //    //      int h = (bounds[2] - bounds[0]) / 2;
+  //    //      if (h > tooltipWidth / 2) {
+  //    //        nvgTextAlign(mNVGContext, NVG_ALIGN_CENTER | NVG_ALIGN_TOP);
+  //    //        nvgTextBoxBounds(mNVGContext, pos.x(), pos.y(), tooltipWidth,
+  //    //                         widget->tooltip().c_str(), nullptr, bounds);
+  //    //
+  //    //        h = (bounds[2] - bounds[0]) / 2;
+  //    //      }
+  //    //      nvgGlobalAlpha(mNVGContext, std::min(1.0, 2 * (elapsed - 0.5f)) *
+  //    //      0.8);
+  //    //
+  //    //      nvgBeginPath(mNVGContext);
+  //    //      nvgFillColor(mNVGContext, Color(0, 255));
+  //    //      nvgRoundedRect(mNVGContext, bounds[0] - 4 - h, bounds[1] - 4,
+  //    //                     (int)(bounds[2] - bounds[0]) + 8,
+  //    //                     (int)(bounds[3] - bounds[1]) + 8, 3);
+  //    //
+  //    //      int px = (int)((bounds[2] + bounds[0]) / 2) - h;
+  //    //      nvgMoveTo(mNVGContext, px, bounds[1] - 10);
+  //    //      nvgLineTo(mNVGContext, px + 7, bounds[1] + 1);
+  //    //      nvgLineTo(mNVGContext, px - 7, bounds[1] + 1);
+  //    //      nvgFill(mNVGContext);
+  //    //
+  //    //      nvgFillColor(mNVGContext, Color(255, 255));
+  //    //      nvgFontBlur(mNVGContext, 0.0f);
+  //    //      nvgTextBox(mNVGContext, pos.x() - h, pos.y(), tooltipWidth,
+  //    //                 widget->tooltip().c_str(), nullptr);
+  //  }
+  //}
 
+  
+  fpsGraph.RenderGraph(mCanvas.get(), 5, 5);
+  cpuGraph.RenderGraph(mCanvas.get(), 5 + 200 + 5, 5);
   mCanvas->flush();
+
+  fpsGraph.UpdateGraph(dt);
+  cpuGraph.UpdateGraph(cpu_time_);
 }
 
 bool Screen::keyboardEvent(int key, int scancode, int action, int modifiers) {
