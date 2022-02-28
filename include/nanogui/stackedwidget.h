@@ -25,20 +25,21 @@ NAMESPACE_BEGIN(nanogui)
  * \brief A stack widget.
  */
 class NANOGUI_EXPORT StackedWidget : public Widget {
-public:
-    StackedWidget(Widget* parent);
+ public:
+  StackedWidget(Widget* parent);
 
-    void setSelectedIndex(int index);
-    int selectedIndex() const;
+  void setSelectedIndex(int index);
+  int selectedIndex() const;
 
-    virtual void performLayout(NVGcontext* ctx) override;
-    virtual Vector2i preferredSize(NVGcontext* ctx) const override;
-    virtual void addChild(int index, Widget* widget) override;
+  void performLayout() override;
+  Vector2i preferredSize() const override;
+  void addChild(int index, Widget* widget) override;
 
-private:
-    int mSelectedIndex = -1;
-public:
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+ private:
+  int mSelectedIndex = -1;
+
+ public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 NAMESPACE_END(nanogui)

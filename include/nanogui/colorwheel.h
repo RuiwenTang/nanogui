@@ -51,10 +51,10 @@ public:
     void setColor(const Color& color);
 
     /// The preferred size of this ColorWheel.
-    virtual Vector2i preferredSize(NVGcontext *ctx) const override;
+    Vector2i preferredSize() const override;
 
     /// Draws the ColorWheel.
-    virtual void draw(NVGcontext *ctx) override;
+    void draw(skity::Canvas *canvas) override;
 
     /// Handles mouse button click events for the ColorWheel.
     virtual bool mouseButtonEvent(const Vector2i &p, int button, bool down, int modifiers) override;

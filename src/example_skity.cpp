@@ -13,7 +13,7 @@ int main(int argc, const char** argv) {
   nanogui::init();
 
   Screen* screen =
-      new Screen(Vector2i(1200, 800), "NanoGUI Skity [GL 4.1]",
+      new Screen(Vector2i(1200, 800), "Skity GUI [OpenGL]",
                  /*resizable*/ false, /*fullscreen*/ false, /*colorBits*/ 8,
                  /*alphaBits*/ 8, /*depthBits*/ 24, /*stencilBits*/ 8,
                  /*nSamples*/ 8, /*glMajor*/ 4, /*glMinor*/ 1);
@@ -236,6 +236,27 @@ int main(int argc, const char** argv) {
   window = new Window(screen, "Misc. widgets");
   window->setPosition(Vector2i(510, 55));
   window->setLayout(new GroupLayout());
+
+  TabWidget* tabWidget = window->add<TabWidget>();
+  Widget* layer = tabWidget->createTab("Color Wheel");
+  layer->setLayout(new GroupLayout());
+
+  // Use overloaded variadic add to fill the tab widget with Different tabs.
+  layer->add<Label>("Color wheel widget", "sans-bold");
+  layer->add<ColorWheel>();
+
+  layer = tabWidget->createTab("Function Graph");
+  layer->setLayout(new GroupLayout());
+
+  Graph *graph = layer->add<Graph>("Some Function");
+
+  graph->setHeader("E = 2.35e-3");
+  graph->setFooter("Iteration 89");
+  VectorXf &func = graph->values();
+  func.resize(100);
+  for (int i = 0; i < 100; ++i)
+    func[i] = 0.5f * (0.5f * std::sin(i / 10.f) +
+                      0.5f * std::cos(i / 23.f) + 1);
 
   screen->setVisible(true);
   screen->performLayout();

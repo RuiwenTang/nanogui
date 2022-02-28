@@ -332,6 +332,7 @@ add_library(nanogui-obj OBJECT
   nanogui_resources.cpp
   include/nanogui/common.h src/common.cpp
   include/nanogui/checkbox.h src/checkbox.cpp
+  include/nanogui/colorwheel.h src/colorwheel.cpp
   include/nanogui/widget.h src/widget.cpp
   include/nanogui/theme.h src/theme.cpp
   include/nanogui/layout.h src/layout.cpp
@@ -345,8 +346,12 @@ add_library(nanogui-obj OBJECT
   include/nanogui/popupbutton.h src/popupbutton.cpp
   include/nanogui/progressbar.h src/progressbar.cpp
   include/nanogui/messagedialog.h src/messagedialog.cpp
+  include/nanogui/graph.h src/graph.cpp
   include/nanogui/vscrollpanel.h src/vscrollpanel.cpp
   include/nanogui/textbox.h src/textbox.cpp
+  include/nanogui/tabheader.h src/tabheader.cpp
+  include/nanogui/tabwidget.h src/tabwidget.cpp
+  include/nanogui/stackedwidget.h src/stackedwidget.cpp
   include/nanogui/combobox.h src/combobox.cpp
   include/nanogui/slider.h src/slider.cpp
   include/nanogui/toolbutton.h
