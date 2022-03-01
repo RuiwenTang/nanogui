@@ -236,6 +236,7 @@ int main(int argc, const char** argv) {
   window = new Window(screen, "Misc. widgets");
   window->setPosition(Vector2i(510, 55));
   window->setLayout(new GroupLayout());
+  window->setFixedSize(Vector2i{400, 300});
 
   TabWidget* tabWidget = window->add<TabWidget>();
   Widget* layer = tabWidget->createTab("Color Wheel");

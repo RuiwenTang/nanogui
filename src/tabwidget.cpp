@@ -26,8 +26,7 @@ NAMESPACE_BEGIN(nanogui)
 
 TabWidget::TabWidget(Widget *parent)
     : Widget(parent),
-      mHeader(
-          new TabHeader(this))  // create using nullptr, add children below
+      mHeader(new TabHeader(this))  // create using nullptr, add children below
       ,
       mContent(new StackedWidget(this)) {
   // since TabWidget::addChild is going to throw an exception to prevent
@@ -44,10 +43,10 @@ TabWidget::TabWidget(Widget *parent)
 void TabWidget::addChild(int /*index*/, Widget * /*widget*/) {
   // there may only be two children: mHeader and mContent, created in the
   // constructor
-//  throw std::runtime_error(
-//      "TabWidget: do not add children directly to the TabWidget, create tabs "
-//      "and add children to the tabs.  See TabWidget class documentation for "
-//      "example usage.");
+  //  throw std::runtime_error(
+  //      "TabWidget: do not add children directly to the TabWidget, create tabs
+  //      " "and add children to the tabs.  See TabWidget class documentation
+  //      for " "example usage.");
 }
 
 void TabWidget::setActiveTab(int tabIndex) {
@@ -164,35 +163,41 @@ void TabWidget::draw(skity::Canvas *canvas) {
   int tabHeight = mHeader->preferredSize().y();
   auto activeArea = mHeader->activeButtonArea();
 
-//  for (int i = 0; i < 3; ++i) {
-//    nvgSave(ctx);
-//    if (i == 0)
-//      nvgIntersectScissor(ctx, mPos.x(), mPos.y(), activeArea.first.x() + 1,
-//                          mSize.y());
-//    else if (i == 1)
-//      nvgIntersectScissor(ctx, mPos.x() + activeArea.second.x(), mPos.y(),
-//                          mSize.x() - activeArea.second.x(), mSize.y());
-//    else
-//      nvgIntersectScissor(ctx, mPos.x(), mPos.y() + tabHeight + 2, mSize.x(),
-//                          mSize.y());
-//
-//    nvgBeginPath(ctx);
-//    nvgStrokeWidth(ctx, 1.0f);
-//    nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + tabHeight + 1.5f,
-//                   mSize.x() - 1, mSize.y() - tabHeight - 2,
-//                   mTheme->mButtonCornerRadius);
-//    nvgStrokeColor(ctx, mTheme->mBorderLight);
-//    nvgStroke(ctx);
-//
-//    nvgBeginPath(ctx);
-//    nvgRoundedRect(ctx, mPos.x() + 0.5f, mPos.y() + tabHeight + 0.5f,
-//                   mSize.x() - 1, mSize.y() - tabHeight - 2,
-//                   mTheme->mButtonCornerRadius);
-//    nvgStrokeColor(ctx, mTheme->mBorderDark);
-//    nvgStroke(ctx);
-//    nvgRestore(ctx);
-//  }
+  for (int i = 0; i < 3; i++) {
+    canvas->save();
 
+    skity::Rect clip_rect;
+    if (i == 0) {
+      clip_rect.setXYWH(0, 0, activeArea.first.x() + 1, mSize.y() - 1);
+    } else if (i == 1) {
+      clip_rect.setXYWH(activeArea.second.x(), 0,
+                        mSize.x() - activeArea.second.x(), mSize.y() - 1);
+    } else {
+      clip_rect.setXYWH(0, tabHeight + 2, mSize.x(), mSize.y() - 1);
+    }
+
+    canvas->clipRect(clip_rect);
+
+    skity::Paint paint;
+    paint.setStyle(skity::Paint::kStroke_Style);
+    paint.setStrokeColor(mTheme->mBorderLight.toColor());
+    paint.setStrokeWidth(1.f);
+
+    skity::Rect rect = skity::Rect::MakeXYWH(
+        0.5f, tabHeight + 1.5f, mSize.x() - 1, mSize.y() - tabHeight - 2);
+    canvas->drawRoundRect(rect, mTheme->mButtonCornerRadius,
+                          mTheme->mButtonCornerRadius, paint);
+
+    paint.setStrokeColor(mTheme->mBorderDark.toColor());
+
+    rect.setXYWH(0.5f, tabHeight + 0.5f, mSize.x() - 1.f,
+                 mSize.y() - tabHeight - 2.f);
+
+    canvas->drawRoundRect(rect, mTheme->mButtonCornerRadius,
+                          mTheme->mButtonCornerRadius, paint);
+
+    canvas->restore();
+  }
   Widget::draw(canvas);
 }
 
